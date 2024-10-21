@@ -38,7 +38,7 @@ plot(tmin)
 </p>
 
 
-Even if there are 12 rasters, each corresponding to a month, the temporal dimension is not expressed in the RasterStack and needs to be added by `time` function
+Even if there are 12 rasters, each corresponding to a month, the temporal dimension is not expressed in the RasterStack and **needs to be added** by `time` function
 
 ``` r
 # here, we will simply use numbers from 1 to 12 to represent # the months.
@@ -59,9 +59,9 @@ print(tmin)
 ```
 
 # Stars Data Cube
-The stars R package (link) provides an infrastructure for managing **data cubes**. Data cubes are multi-dimensional arrays that enable the organization and analysis of large datasets across multiple dimensions, such as time, space, and various environmental variables.
+The ([stars R package](https://r-spatial.github.io/stars/)) provides an infrastructure for managing **data cubes**. Data cubes are multi-dimensional arrays that enable the organization and analysis of large datasets across multiple dimensions, such as time, space, and various environmental variables.
 
-To start, we will create a stars object that contains the climatic variables as attributes and  x and y as dimensions. This way, we have everything we need to proceed into a single object.
+We will create a stars object that contains the climatic variables as attributes and x and y as dimensions. This way, we have everything we need to proceed into a single object.
 ```r
 # first, we create a list that contains all the stacks, to which we apply st_as_stars.
 stars_clima <- list(tmin, tmax, prec) %>%
@@ -86,7 +86,7 @@ print(stars_clima)
 # Virtual Species
 The purpose of this brief tutorial is to construct a data structure that allows for the comparison of suitability between two species occupying the same area over time.
 
-As an example, we will consider only two species and two months to observe changes in suitability. The suitability of a real species can be obtained by applying **Species Distribution Models (SDMs)**. But in our case, since we are interested in creating the structure, we will use `virtualspecies` (link), which are artificial species randomly generated.
+As an example, we will consider only two species and two months to observe changes in suitability. The suitability of a real species can be obtained by applying **Species Distribution Models (SDMs)**. But in our case, since we are interested in creating the structure, we will use [virtualspecies](https://borisleroy.com/files/virtualspecies-tutorial.html), which are artificial species randomly generated.
 
 During the creation of these random virtual species, the first step involves generating suitability based on the initial environmental data: in our case, the climatic data.
 
