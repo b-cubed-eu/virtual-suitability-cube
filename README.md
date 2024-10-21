@@ -5,7 +5,7 @@
 
 
 <p align="center">
-  <img width="630" height="430" src="https://github.com/rociobeatrizc/virtual_suitability_cube/blob/main/images/vsc_page-0002.jpg">
+  <img width="630" height="470" src="https://github.com/rociobeatrizc/virtual_suitability_cube/blob/main/images/vsc_page-0002.jpg">
 </p>
 ``` r
 # load packages
