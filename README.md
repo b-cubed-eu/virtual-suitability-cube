@@ -131,6 +131,7 @@ print(january)
 plot(january, col = plasma(500, alpha = 1, begin = 0, end = 1, direction = 1))
 
 ```
+<img src="images/clima_stars.png" width="50" height="50">
 
 ![Clima January](images/clima_stars.png)
 
