@@ -7,18 +7,24 @@ Studying species suitability under different environmental conditions is importa
 
 To make it easier to observe the suitability of multiple species over time and space, we developed a framework that uses **data cubes**, which are multidimensional arrays that organize the data in a structured way. In this tutorial, we show the steps to create a `stars` object, which includes three dimensions: time, space (in the form of grid cells), and species, with suitability as the main attribute. Stars objects can be sliced, aggregated along one of the dimensions, and analyzed, making them perfect for studying species suitability.
 
-To demonstrate the cube structure, we use **virtual species**, which are artificially generated species for which we know the suitability based on climate data. The steps include combining the climate data to calculate the suitability of two different species over time and in the same area, and then aggregating these two species into a single stars object. 
+To demonstrate the structure of the data cube, we use **virtual species**, which are artificially generated species for which we know the suitability map in advance, based on climate data. The main steps are: combining climate data to calculate the suitability of two different species over time and in the same area, and then merging these two species into a single stars object.
 
-This approach allows us to easily visualize and analyze species suitability across time and space for multiple species. 
+Starting with a time series of climate variables, we combine them to create the suitability for two different virtual species, whose trends over time we want to observe.
+
 
 <p align="center">
   <img width="630" height="400" src="https://github.com/rociobeatrizc/virtual_suitability_cube/blob/main/images/vsc_page-0001.jpg">
 </p>
 
+The two data cubes of species suitability are treated as separate entities, which we can then combine by aggregating them over polygons, creating a vector data cube.
 
 <p align="center">
   <img width="630" height="470" src="https://github.com/rociobeatrizc/virtual_suitability_cube/blob/main/images/vsc_page-0002.jpg">
 </p>
+
+This approach makes it easy to visualize and analyze species suitability across time and space for multiple species at once.
+
+## Climatic Data
 
 ``` r
 # load packages
@@ -35,7 +41,6 @@ library(purrr)
 library(reshape2)
 ```
 
-## Climatic Data
 
 To begin, we will download climate data from [WorldClim](https://www.worldclim.org/).
 Climate data are among the datasets from which the suitability of a species can be calculated. 
@@ -211,7 +216,7 @@ title("Suitability of Species 2 in Jan-Feb", outer=TRUE, line=-0.9)
   <img width="500" height="350" src="https://github.com/rociobeatrizc/virtual_suitability_cube/blob/main/images/suit_sp2.png">
 </p>
 
-Now, for each species, we will create a data cube: the dimensions remain x, y, and time, but this time the attribute is the suitability only, with values ranging from 0 to 1, which characterizes each species.
+For each species, we will create a data cube: the dimensions remain x, y, and time, but this time the attribute is the suitability only, with values ranging from 0 to 1, which characterizes each species.
 ```r
 # stars cube for Species 1
 suit_sp1 <- list(suit_sp1)
@@ -246,7 +251,7 @@ print(suit_cube_sp2)
 ```
 ## Virtual Data Cube
 
-Now, we want to incorporate both species into the same object.
+We want to incorporate both species into the same object.
 
 To combine the two species into a single object, we need to collapse the x and y dimensions into one, creating a grid that represents individual cells within the study area. This grid allows us to reduce the dimensions of the stars object and facilitates the transition to a **vector data cube**.
 
