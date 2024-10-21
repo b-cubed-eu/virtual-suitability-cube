@@ -1,4 +1,7 @@
-
+1.jpg
+<p align="center">
+  <img width="600" height="380" src="https://github.com/rociobeatrizc/virtual_suitability_cube/blob/main/images/vsc_page-000">
+</p>
 ``` r
 # load packages
 library(sf)
