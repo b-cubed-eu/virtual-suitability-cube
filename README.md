@@ -1,6 +1,11 @@
-1.jpg
+
 <p align="center">
-  <img width="600" height="380" src="https://github.com/rociobeatrizc/virtual_suitability_cube/blob/main/images/vsc_page-0001.jpg">
+  <img width="630" height="400" src="https://github.com/rociobeatrizc/virtual_suitability_cube/blob/main/images/vsc_page-0001.jpg">
+</p>
+
+
+<p align="center">
+  <img width="630" height="400" src="https://github.com/rociobeatrizc/virtual_suitability_cube/blob/main/images/vsc_page-0002.jpg">
 </p>
 ``` r
 # load packages
