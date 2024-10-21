@@ -132,7 +132,7 @@ plot(january, col = plasma(500, alpha = 1, begin = 0, end = 1, direction = 1))
 
 ```
 
-![Clima January](clima_stars.png)
+![Clima January](images/clima_stars.png)
 
 
 The following function uses the `generateRandomSp` function from the `virtualspecies` , which creates random species based on the stack of climatic variables and allows us to set some parameters.
@@ -169,13 +169,13 @@ time(suit_sp2) <- time(suit_sp1) <- 1:2
 plot(suit_sp1, col = viridis(500, alpha = 1, begin = 0, end = 1, direction = 1))
 title("Suitability of Species 1 in Jan-Feb", outer=TRUE, line=-0.9)
 ```
-![suit.1](suit_sp1.png)
+![suit.1](images/suit_sp1.png)
 ```r
 # suitability for Species 2
 plot(suit_sp2, col = viridis(500, alpha = 1, begin = 0, end = 1, direction = 1))
 title("Suitability of Species 2 in Jan-Feb", outer=TRUE, line=-0.9)
 ```
-![alt text](suit_sp2.png)
+![alt text](images/suit_sp2.png)
 
 Now, for each species, we will create a data cube: the dimensions remain x, y, and time, but this time the attribute is the suitability only, with values ranging from 0 to 1, which characterizes each species.
 ```r
@@ -250,7 +250,7 @@ ggplot() +
   )
 ```
 
-![Grid](grid_lux.png)
+![Grid](images/grid_lux.png)
 
 ```r
 # aggregate by cells, calculating the average of the suitability values within each cell
@@ -349,4 +349,4 @@ ggplot(df_long, aes(x = species, y = suitability, color = species)) +
     legend.position = "right",                 
     panel.border = element_rect(color = "black", fill = NA, size = 0.))
 ```
-![alt text](boxplot.png)
+![Suitabilities](images/boxplot.png)
