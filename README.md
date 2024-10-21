@@ -33,7 +33,9 @@ prec <- worldclim_country("Lux", "prec", path=tempdir(), res = 0.5, version = "2
 # 12 months of precipitation in Luxembourg. Each layer represents the average value for a month.
 plot(tmin)
 ```
-![Precipiation in Luxembourg](lux.png)
+<p align="center">
+  <img width="460" height="300" src="https://github.com/rociobeatrizc/virtual_suitability_cube/blob/main/images/lux.png">
+</p>
 
 
 Even if there are 12 rasters, each corresponding to a month, the temporal dimension is not expressed in the RasterStack and needs to be added by `time` function
