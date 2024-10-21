@@ -172,14 +172,17 @@ time(suit_sp2) <- time(suit_sp1) <- 1:2
 plot(suit_sp1, col = viridis(500, alpha = 1, begin = 0, end = 1, direction = 1))
 title("Suitability of Species 1 in Jan-Feb", outer=TRUE, line=-0.9)
 ```
+
 <p align="center">
   <img width="500" height="350" src="https://github.com/rociobeatrizc/virtual_suitability_cube/blob/main/images/suit_sp1.png">
 </p>
+
 ```r
 # suitability for Species 2
 plot(suit_sp2, col = viridis(500, alpha = 1, begin = 0, end = 1, direction = 1))
 title("Suitability of Species 2 in Jan-Feb", outer=TRUE, line=-0.9)
 ```
+
 <p align="center">
   <img width="500" height="350" src="https://github.com/rociobeatrizc/virtual_suitability_cube/blob/main/images/suit_sp2.png">
 </p>
