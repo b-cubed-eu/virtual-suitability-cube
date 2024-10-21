@@ -1,4 +1,4 @@
-# B-Cubed/ Suitability Cube
+# B-Cubed/Suitability Cube
 
 Milestone 4
 
