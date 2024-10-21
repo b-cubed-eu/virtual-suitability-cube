@@ -34,7 +34,7 @@ prec <- worldclim_country("Lux", "prec", path=tempdir(), res = 0.5, version = "2
 plot(tmin)
 ```
 <p align="center">
-  <img width="460" height="300" src="https://github.com/rociobeatrizc/virtual_suitability_cube/blob/main/images/lux.png">
+  <img width="500" height="350" src="https://github.com/rociobeatrizc/virtual_suitability_cube/blob/main/images/lux.png">
 </p>
 
 
@@ -133,9 +133,9 @@ print(january)
 plot(january, col = plasma(500, alpha = 1, begin = 0, end = 1, direction = 1))
 
 ```
-<img src="https://github.com/rociobeatrizc/virtual_suitability_cube/blob/main/images/suit_sp1.png" width="50" height="50">
-
-![Clima January](images/clima_stars.png)
+<p align="center">
+  <img width="500" height="350" src="https://github.com/rociobeatrizc/virtual_suitability_cube/blob/main/images/clima_stars.png">
+</p>
 
 
 The following function uses the `generateRandomSp` function from the `virtualspecies` , which creates random species based on the stack of climatic variables and allows us to set some parameters.
@@ -172,13 +172,17 @@ time(suit_sp2) <- time(suit_sp1) <- 1:2
 plot(suit_sp1, col = viridis(500, alpha = 1, begin = 0, end = 1, direction = 1))
 title("Suitability of Species 1 in Jan-Feb", outer=TRUE, line=-0.9)
 ```
-![suit.1](images/suit_sp1.png)
+<p align="center">
+  <img width="500" height="350" src="https://github.com/rociobeatrizc/virtual_suitability_cube/blob/main/images/suit_sp1.png">
+</p>
 ```r
 # suitability for Species 2
 plot(suit_sp2, col = viridis(500, alpha = 1, begin = 0, end = 1, direction = 1))
 title("Suitability of Species 2 in Jan-Feb", outer=TRUE, line=-0.9)
 ```
-![alt text](images/suit_sp2.png)
+<p align="center">
+  <img width="500" height="350" src="https://github.com/rociobeatrizc/virtual_suitability_cube/blob/main/images/suit_sp2.png">
+</p>
 
 Now, for each species, we will create a data cube: the dimensions remain x, y, and time, but this time the attribute is the suitability only, with values ranging from 0 to 1, which characterizes each species.
 ```r
@@ -253,7 +257,9 @@ ggplot() +
   )
 ```
 
-![Grid](images/grid_lux.png)
+<p align="center">
+  <img width="500" height="350" src="https://github.com/rociobeatrizc/virtual_suitability_cube/blob/main/images/grid_lux.png">
+</p>
 
 ```r
 # aggregate by cells, calculating the average of the suitability values within each cell
@@ -352,4 +358,6 @@ ggplot(df_long, aes(x = species, y = suitability, color = species)) +
     legend.position = "right",                 
     panel.border = element_rect(color = "black", fill = NA, size = 0.))
 ```
-![Suitabilities](images/boxplot.png)
+<p align="center">
+  <img width="500" height="350" src="https://github.com/rociobeatrizc/virtual_suitability_cube/blob/main/images/boxplot.png">
+</p>
