@@ -36,7 +36,7 @@ plot(tmin)
 ![Precipiation in Luxembourg](lux.png)
 
 
-Although there are 12 rasters, each corresponding to a month, the temporal dimension is not expressed in the RasterStack and needs to be added by `time` function
+Even if there are 12 rasters, each corresponding to a month, the temporal dimension is not expressed in the RasterStack and needs to be added by `time` function
 
 ``` r
 # here, we will simply use numbers from 1 to 12 to represent # the months.
