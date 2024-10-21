@@ -1,4 +1,5 @@
-
+# Virtual Suitability Cube
+Cos'è la suitability. 
 <p align="center">
   <img width="630" height="400" src="https://github.com/rociobeatrizc/virtual_suitability_cube/blob/main/images/vsc_page-0001.jpg">
 </p>
@@ -21,7 +22,9 @@ library(geodata)
 library(purrr)
 library(reshape2)
 ```
-# Climatic Data
+
+## Climatic Data
+
 To begin, we will download climate data from [WorldClim](https://www.worldclim.org/).
 Climate data are among the datasets from which the suitability of a species can be calculated. 
 
@@ -66,7 +69,7 @@ print(tmin)
 # time (raw)  : 1 to 12 
 ```
 
-# Stars Data Cube
+## Stars Data Cube
 The [stars R package](https://r-spatial.github.io/stars/) provides an infrastructure for managing **data cubes**. Data cubes are multi-dimensional arrays that enable the organization and analysis of large datasets across multiple dimensions, such as time, space, and various environmental variables.
 
 We will create a stars object that contains the climatic variables as attributes and x and y as dimensions. This way, we have everything we need to proceed into a single object.
@@ -91,7 +94,7 @@ print(stars_clima)
 # time    1  12      1         1     NA    NA  
 ```
 
-# Virtual Species
+## Virtual Species
 The purpose of this brief tutorial is to construct a data structure that allows for the comparison of suitability between two species occupying the same area over time.
 
 As an example, we will consider only two species and two months to observe changes in suitability. The suitability of a real species can be obtained by applying **Species Distribution Models (SDMs)**. But in our case, since we are interested in creating the structure, we will use [virtualspecies](https://borisleroy.com/files/virtualspecies-tutorial.html), which are artificial species randomly generated.
@@ -228,7 +231,7 @@ print(suit_cube_sp2)
 # y       1 180   50.5 -0.008333 WGS 84 [y]
 # time    1   2      1         1     NA   
 ```
-# Virtual Data Cube
+## Virtual Data Cube
 
 Now, we want to incorporate both species into the same object.
 
