@@ -22,7 +22,7 @@ library(osmextract)
 setwd("my/path")
 ```
 ## Input data
-Carichiamo i file vettoriali: l'area di studio e il reticolo stradale da Open Street Map ([osmextract R package](https://docs.ropensci.org/osmextract/))
+Let's load the vector files: the study area and the road network from Open Street Map ([osmextract R package](https://docs.ropensci.org/osmextract/)).
 
 ``` r
 # upload shapefile
@@ -105,12 +105,12 @@ mydata <- mydata %>% crop(., aoi_sp) %>% mask(., aoi_sp)
 mydata_backup <- mydata
 ```
 ## Virtual Species
-Generating random species from known environmental data allows controlling the factors that can influence the distribution of real data. Questo può essere fatto con il pacchetto virtualspecies.  
-To create a series of occurrence points for a species, it is necessary to go through 3 steps. All'interno di ciascuno step si possono regolare dei parametri il cui significato è spiegato nel tutorial virtualspecies:
+Generating random species from known environmental data allows controlling the factors that can influence the distribution of real data. Questo può essere fatto con il pacchetto **virtualspecies** [Leroy, 2018](https://borisleroy.com/files/virtualspecies-tutorial.html).  
+To create a series of occurrence points for a species, it is necessary to go through 3 steps. Within each step, you can adjust parameters whose meaning is explained in the virtualspecies tutorial.
 
 1. By intersecting bioclimatic data, the first output obtained is a **suitability map**
 2. The suitability map is converted into a binary **presence/absence map** through a probability function (logistic curve) that associates the suitability value with the probability of finding the virtual species for each pixel. This subset of the environmental niche that is actually occupied by the species corresponds to the realized niche (Hutchinson, 1957).
-3. The third step consists of generating, within the presence/absence raster, a series of occurrence points. 
+3. The third step consists of generating, within the presence/absence raster, a series of **occurrence points**. 
 
 
 ``` r
@@ -152,12 +152,10 @@ presence.points <- sampleOccurrences(new.pres,
 
 
 ## Hypervolume as ecological niche
-Hutchinson defined an ecological niche as an n-dimensional volume in
-the environmental space where a species can maintain a viable population and persist along
-time (Sillero et al., 2021). The Hutchinsonian niche, or n-dimensional environmental space, is
-defined as the hypervolume (Blonder et al., 2014). 
+Hutchinson defined an ecological niche as an n-dimensional volume in the environmental space where a species can maintain a viable population and persist along
+time (Sillero et al., 2021). The Hutchinsonian niche, or n-dimensional environmental space, is defined as the hypervolume (Blonder et al., 2014). 
 
-The calculation of the hypervolume is performed using the 'hypervolume_gaussian' function from the R package hypervolume, developed by Blonder et al. `hypervolume_gaussian` constructs a hypervolume by building a gaussian kernel density estimate on an adaptive grid of random points wrapped around the original data points. 
+The calculation of the hypervolume is performed using the `hypervolume_gaussian` function from the R package **hypervolume** [Blonder, 2014](https://onlinelibrary.wiley.com/doi/10.1111/geb.12146). `hypervolume_gaussian` constructs a hypervolume by building a gaussian kernel density estimate on an adaptive grid of random points wrapped around the original data points. 
 
 However, since we aim to calculate not just one but multiple hypervolumes as we increase and accumulate occurrences, `hypervolume_gaussian` will be at the core of a function that, starting from a single random occurrence, progressively increases the number of occurrences (and their corresponding bioclimatic variables) and calculates the hypervolume. This increment, a subsample of the original sample, is random and without replacement.
 
