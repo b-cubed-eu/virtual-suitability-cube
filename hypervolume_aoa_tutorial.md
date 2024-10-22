@@ -260,9 +260,14 @@ ggplot() +
     axis.title.y = element_blank()
   )
 ```
+<p align="center">
+  <img width="650" height="250" src="https://github.com/rociobeatrizc/virtual-suitability-cube/blob/main/images/distance_poster.png">
+</p>
+
+
 As the distance from the road network increases, the probability of sampling a species will decrease. We can simulate this situation with the following probability function
 
-$$P(sampling) = 1 - \dfrac{log(c\cdot min_dist)}{log(c \cdot max(min_dist))}$$
+$$P(sampling) = 1 - \dfrac{log(c\cdot min.dist)}{log(c \cdot max(min.dist))}$$
 
 We used this function to transform distances into probability values: for each distance value, there is a probability for a point to be sampled. Once again, we obtain a raster, making it easy to extract the probability value.
 
@@ -270,23 +275,23 @@ After setting a probability threshold, we selected the points that fall on pixel
 
 ``` r
 
-## Extract distances
+## extract distances
 d_raster <- d %>% raster()
 distances <- d_raster %>%  as.data.frame()
 
-## Sampling probability: simulation of the lazy sampler
+## sampling probability function: simulation of the lazy sampler
 c <- 1
 sampling_prob <- 1-(((log(c*distances))/(log(max(c*distances)))))
 sampling_prob <- as.data.frame(sampling_prob)
 
-# Some values are: Inf. Replace those values with 1
+# some values are: Inf. Replace those values with 1
 sampling_prob[sampling_prob == Inf] <- 1
 sampling_prob[sampling_prob > 1] <- 1
 
-# New raster with probability to be sampled instead of distances
+# new raster with probability to be sampled instead of distances
 prob_raster <- classify(d, cbind(values(d), sampling_prob))
 
-## Plot: sampling probability
+## plot: sampling probability
 prob_r <- prob_raster %>% raster() %>% crop(., aoi_sp) %>% mask(., aoi_sp)
 raster_df_prob <- as.data.frame(rasterToPoints(prob_r), xy = TRUE)
 value_column <- names(raster_df_prob)[3]
@@ -308,11 +313,12 @@ ggplot() +
   )
 
 ```
+<p align="center">
+  <img width="650" height="250" src="https://github.com/rociobeatrizc/virtual-suitability-cube/blob/main/images/sampling_prob_poster.png">
+</p>
+
 
 ``` r
-
-
-
 
 ## Occurrences as points
 coord_occ <- terra::vect(filtered_occ, geom = c("x","y"), crs="epsg:4326")
