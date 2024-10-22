@@ -1,5 +1,5 @@
 ``` r
-# Packages
+# load packages
 library(CAST)
 library(caret)
 library(sf)
@@ -7,7 +7,6 @@ library(ClimDatDownloadR)
 library(devtools)
 library(raster)
 library(viridis)
-library(corrplot)
 library(virtualspecies)
 library(ggplot2)
 library(tidyverse)
@@ -19,17 +18,19 @@ library(ggmap)
 library(osmdata)
 library(osmextract)
 
-# Set working directory
+# set working directory
 setwd("my/path")
+```
+Carichiamo i file vettoriali: l'area di studio e il reticolo stradale da Open Street Map ( [osmextract R package](https://docs.ropensci.org/osmextract/)
 
-
-# Upload shapefile
+``` r
+# upload shapefile
 aoi <- st_read("aoi.shp")
 
-# Bounding Box 
+# bounding box 
 aoi_bb <- st_bbox(aoi)
 
-# From OSM select type of roads: primary, secondary, tertiary (paths)
+# from Open Street Map select type of roads: primary, secondary, tertiary (paths)
 ht_secondary <- "secondary"
 ```
 ``` r
@@ -769,3 +770,5 @@ cat("Area red pixels (km^2):", area_red_km2)
 cat("N. blu pixels", num_blue_pixels)
 cat("Area blu pixels (km^2):", area_blue_km2)
 ```
+# References
+ * Gilardi A, Lovelace R (2024). osmextract: Download and Import Open Street Map Data Extracts. R package version 0.5.1.900, [https://github.com/ropensci/osmextract](https://docs.ropensci.org/osmextract/).
