@@ -145,28 +145,37 @@ presence.points <- sampleOccurrences(new.pres,
                                      correct.by.suitability = TRUE,
                                      plot = FALSE)
 ```
-plot with the steps
+
+<p align="center">
+  <img width="500" height="370" src="https://github.com/rociobeatrizc/virtual-suitability-cube/blob/main/images/vsc_page-0003.jpg">
+</p>
+
+
+## Hypervolume
+Hutchinson defined an ecological niche as an n-dimensional volume in
+the environmental space where a species can maintain a viable population and persist along
+time (Sillero et al., 2021). The Hutchinsonian niche, or n-dimensional environmental space, is
+defined as the hypervolume (Blonder et al., 2014). 
+
+The calculation of the hypervolume is performed using the 'hypervolume_gaussian' function from the R package hypervolume, developed by Blonder et al. 'hypervolume_gaussian' constructs a hypervolume by building a gaussian kernel density estimate on an adaptive grid of random points wrapped around the original data points. 
+
+However, since we aim to calculate not just one but multiple hypervolumes as we increase and accumulate occurrences, hypervolume_gaussian will be at the core of a function that, starting from a single random occurrence, progressively increases the number of occurrences (and their corresponding bioclimatic variables) and calculates the hypervolume. This increment, a subsample of the original sample, is random and without replacement.
 
 ```r
-## Preliminary Steps for Niche Analysis
+## preliminary Steps for Niche Analysis
 
 # Z transform for hypervolume building
 for (i in 1:nlayers(mydata)){
   mydata[[i]] <- (mydata[[i]] - cellStats(mydata[[i]], 'mean')) / cellStats(mydata[[i]], 'sd') 
 }
 
-
-
-# The raster of occurrences is transformed into a dataset, from which the rows satisfying both conditions Real = 1 and Observed = 1 are preserved
+# the raster of occurrences is transformed into a dataset, from which the rows satisfying both conditions Real = 1 and Observed = 1 are preserved
 raster_occurences <- presence.points$sample.points %>% as.data.frame() %>% .[.$Real == 1 & .$Observed == 1, ]
 
-# The environmental variables are associated with the occurrences using their coordinates
+# the environmental variables are associated with the occurrences using their coordinates
 values_occ <- mydata %>% rasterToPoints() %>% as.data.frame()
-
 filtered_occ <- merge(values_occ, raster_occurences, by = c("x", "y"))
-
 occurrences_values <- filtered_occ[,-c(1:2, 7:8)]
-
 
 ## Functions for Hypervolume
 
@@ -214,6 +223,7 @@ acc_curve <- function(x, no) {
   return(list(result))
 }
 ```
+
 
 ``` r
 
