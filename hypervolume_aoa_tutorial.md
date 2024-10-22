@@ -435,7 +435,7 @@ ggplot() +
 ```
 
 <p align="center">
-  <img width="350" height="400" src="https://github.com/rociobeatrizc/virtual-suitability-cube/blob/main/images/unbiased_poster.png">
+  <img width="500" height="400" src="https://github.com/rociobeatrizc/virtual-suitability-cube/blob/main/images/unbiased_poster.png">
 </p>
 
 Ora calcoliamo l'ipervolume del sottocampione biased.
@@ -505,7 +505,7 @@ ggplot() +
   theme_minimal()
 ```
 <p align="center">
-  <img width="350" height="400" src="https://github.com/rociobeatrizc/virtual-suitability-cube/blob/main/images/biased_poster.png">
+  <img width="500" height="400" src="https://github.com/rociobeatrizc/virtual-suitability-cube/blob/main/images/biased_poster.png">
 </p>
 
 Mettiamo nello stesso grafico i due ipervolumi, ricordando che fanno riferimento alla stessa specie
