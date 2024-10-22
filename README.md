@@ -19,13 +19,13 @@ Starting with a time series of climate variables, we combine them to create the 
 
 
 <p align="center">
-  <img width="630" height="400" src="https://github.com/rociobeatrizc/virtual_suitability_cube/blob/main/images/vsc_page-0001.jpg">
+  <img width="610" height="400" src="https://github.com/rociobeatrizc/virtual_suitability_cube/blob/main/images/vsc_page-0001.jpg">
 </p>
 
 The two data cubes of species suitability are treated as separate entities, which we can then combine by aggregating them over polygons, creating a vector data cube.
 
 <p align="center">
-  <img width="630" height="470" src="https://github.com/rociobeatrizc/virtual_suitability_cube/blob/main/images/vsc_page-0002.jpg">
+  <img width="610" height="470" src="https://github.com/rociobeatrizc/virtual_suitability_cube/blob/main/images/vsc_page-0002.jpg">
 </p>
 
 This approach makes it easy to visualize and analyze species suitability across time and space for multiple species at once.
