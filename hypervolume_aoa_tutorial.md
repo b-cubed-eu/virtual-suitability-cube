@@ -434,23 +434,25 @@ ggplot() +
 
 ```
 
-unbiased_hyp
+<p align="center">
+  <img width="500" height="550" src="https://github.com/rociobeatrizc/virtual-suitability-cube/blob/main/images/unbiased_poster.png">
+</p>
 
+Ora calcoliamo l'ipervolume del sottocampione biased.
 ``` r
 ## hypervolume of biased occurrences (road driven: biased sampling)
 biased_df <- points_biased %>%
   as.data.frame() %>%
   .[,-c(5:8)]
 
-
-# Stop
+# stop
 stop_biased <- nrow(biased_df)
 hyp_steps_b <- c(seq(from = 20, to = stop_biased, by = 20), stop_biased)
 
-# Empty list
+# empty list
 all_sim_b <- list()
 
-# For cycle for simulations
+# for cycle for simulations
 for (sim in 1:num_sim) {
   
   list_output_b <- list()
@@ -464,8 +466,7 @@ for (sim in 1:num_sim) {
   
 }
 
-
-# Combined df
+# combined df
 combined_df_biased <- do.call(rbind, lapply(seq_along(all_sim_b), function(sim) {
   
   do.call(rbind, lapply(all_sim_b[[sim]], function(df) {
@@ -477,7 +478,7 @@ combined_df_biased <- do.call(rbind, lapply(seq_along(all_sim_b), function(sim) 
 }))
 
 
-# Mean LOESS
+# mean LOESS
 loess_predictions_biased <- lapply(unique(combined_df_biased$n_occ), function(n) {
   
   preds <- sapply(all_sim_b, function(lista) {
@@ -489,11 +490,10 @@ loess_predictions_biased <- lapply(unique(combined_df_biased$n_occ), function(n)
   
 })
 
-
-# Mean in one df
+# mean in one df
 pred_mean_b <- do.call(rbind, loess_predictions_biased)
 
-## Plot: biased hypervolume
+## plot: biased hypervolume
 ggplot() +
   geom_smooth(data = combined_df_biased, aes(x = n_occ, y = iperv, group = sim), 
               method = "loess", se = FALSE, color = "grey", size = 0.5, alpha = 0.5) +
@@ -503,14 +503,19 @@ ggplot() +
        x = "Occurrences",
        y = "Hypervolume") +
   theme_minimal()
+```
+<p align="center">
+  <img width="500" height="550" src="https://github.com/rociobeatrizc/virtual-suitability-cube/blob/main/images/biased_poster.png">
+</p>
 
-
-## Plot: unbiased & biased
+Mettiamo nello stesso grafico i due ipervolumi, ricordando che fanno riferimento alla stessa specie
+``` r
+# plot: unbiased & biased
 combined_df$total <- "unbiased"
 combined_df_biased$total <- "biased"
 combined_data <- rbind(combined_df, combined_df_biased)
 
-# Filter NA
+# filter NA
 pred_mean <- pred_mean %>% filter(!is.na(n_occ) & !is.na(iperv_mean))
 pred_mean_b <- pred_mean_b %>% filter(!is.na(n_occ) & !is.na(iperv_mean))
 
@@ -534,9 +539,11 @@ ggplot() +
   theme_minimal()
 
 ```
+e salviamo i nostri valori
+
 ``` r
 
-## Useful values 
+## useful values 
 # Convergence values
 final_unbiased <- tail(pred_mean, 1)
 final_biased <- tail(pred_mean_b, 1)
@@ -545,7 +552,6 @@ final_results <- data.frame(
   n_occ = c(final_unbiased$n_occ, final_biased$n_occ),
   iperv = c(final_unbiased$iperv_mean, final_biased$iperv_mean)
 )
-
 
 # CSV
 write.csv(final_results, file = "specie_1.csv", row.names = FALSE)
