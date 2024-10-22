@@ -21,7 +21,7 @@ library(osmextract)
 # set working directory
 setwd("my/path")
 ```
-Carichiamo i file vettoriali: l'area di studio e il reticolo stradale da Open Street Map ( [osmextract R package](https://docs.ropensci.org/osmextract/)
+Carichiamo i file vettoriali: l'area di studio e il reticolo stradale da Open Street Map ([osmextract R package](https://docs.ropensci.org/osmextract/))
 
 ``` r
 # upload shapefile
@@ -32,14 +32,24 @@ aoi_bb <- st_bbox(aoi)
 
 # from Open Street Map select type of roads: primary, secondary, tertiary (paths)
 ht_secondary <- "secondary"
-```
-``` r
-# Download roads from OSM
+
+# download roads from OSM: our region is Abruzzo, Italy
 osm_aoi <- oe_get("Abruzzo", stringsAsFactors = FALSE, quiet = TRUE)
 osm_aoi_roads <- osm_aoi[osm_aoi$highway %in% ht_secondary, ]
 plot(osm_aoi_roads$geometry)
 
-## Download bioclimatic variables from CHELSA
+```
+The input data for virtual species are environmental spatial data (raster data).
+
+**CHELSA** (Climatologies at high resolution for the earth’s land surface areas) is a very high resolution (30 arc sec, ~1km) global downscaled climate data set: it is built to provide free access to high resolution climate data for research and application, and is constantly updated and refined.
+
+[Bioclimatic variables](https://chelsa-climate.org/bioclim) are derived variables developed for species distribution modeling and related ecological applications.
+
+You can directly download CHELSA data into R.
+
+``` r
+
+# download bioclimatic variables from CHELSA
 Chelsa.Clim.download(
   # Starting from the workind directory, specify the path
   #  save.location = "my/path",
@@ -47,23 +57,23 @@ Chelsa.Clim.download(
   # 'bio' contains all the bioclimatic variables
   parameter = "bio",
   
-  # Some variables are chosen from the 19 available
+  # some variables are chosen from the 19 available
   bio.var = c(1, 7, 13, 14),
   
-  # Version
+  # version
   version.var = "2.1",
   
-  # Cropping along the area of interest
+  # cropping along the area of interest
   clipping = TRUE,
   clip.shapefile = aoi,
   
-  # Insert the coordinates of the area of interest (bounding box)
+  # insert the coordinates of the area of interest (bounding box)
   clip.extent = aoi_bb,
   
-  # Buffer, if needed
+  # buffer, if needed
   # buffer = 3,
   
-  # Other commands
+  # other commands
   convert.files.to.asc = FALSE,
   stacking.data = TRUE,
   combine.raw.zip = FALSE,
@@ -72,21 +82,15 @@ Chelsa.Clim.download(
 )
 
 
-##  Upload bioclimatic variables
-# String containing the names of raster files
+##  upload bioclimatic variables
+# string containing the names of raster files
 rastlist <- list.files(path ="my/path/bio/ChelsaV2.1Climatologies/clipped_2024-09-18_10-46-34", pattern = "CHELSA", full.names = TRUE)
 
-# Using the list of names, all the files are imported into a single raster package
+# using the list of names, all the files are imported into a single raster package
 mydata <- stack(rastlist)
 
-# Change data names
+# change data names
 names(mydata) <- c("bio01", "bio07", "bio13", "bio14")
-
-# Plot all data
-plot(mydata)
-
-# bio1: temperature
-plot(mydata[[1]], col = magma(500, alpha = 1, begin = 0, end = 1, direction = 1), legend = FALSE, bty= "n", box=FALSE)
 ```
 
 ``` r
