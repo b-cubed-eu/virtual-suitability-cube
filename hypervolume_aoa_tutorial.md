@@ -261,7 +261,7 @@ ggplot() +
   )
 ```
 <p align="center">
-  <img width="650" height="250" src="https://github.com/rociobeatrizc/virtual-suitability-cube/blob/main/images/distance_poster.png">
+  <img width="450" height="500" src="https://github.com/rociobeatrizc/virtual-suitability-cube/blob/main/images/distance_poster.png">
 </p>
 
 
@@ -314,7 +314,7 @@ ggplot() +
 
 ```
 <p align="center">
-  <img width="650" height="250" src="https://github.com/rociobeatrizc/virtual-suitability-cube/blob/main/images/sampling_prob_poster.png">
+  <img width="450" height="500" src="https://github.com/rociobeatrizc/virtual-suitability-cube/blob/main/images/sampling_prob_poster.png">
 </p>
 
 
