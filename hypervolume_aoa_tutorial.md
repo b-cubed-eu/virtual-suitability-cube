@@ -261,7 +261,7 @@ ggplot() +
   )
 ```
 <p align="center">
-  <img width="460" height="370" src="https://github.com/rociobeatrizc/virtual-suitability-cube/blob/main/images/distance_poster.png">
+  <img width="430" height="300" src="https://github.com/rociobeatrizc/virtual-suitability-cube/blob/main/images/distance_poster.png">
 </p>
 
 
@@ -314,7 +314,7 @@ ggplot() +
 
 ```
 <p align="center">
-  <img width="460" height="370" src="https://github.com/rociobeatrizc/virtual-suitability-cube/blob/main/images/sampling_prob_poster.png">
+  <img width="430" height="300" src="https://github.com/rociobeatrizc/virtual-suitability-cube/blob/main/images/sampling_prob_poster.png">
 </p>
 
 Ora associamo a ciascun punto la propria probabilità di essere campionato e filtriamo quelli la cui probabilità è 100%: dal campionamento randomico, si ottiene un sottoinsieme che presenta un bias spaziale, dato che è stato campionato preferenzialmente lungo il reticolo stradale
@@ -358,7 +358,7 @@ legend("topright", legend = c("Unbiased", "Biased"), col = c("black", "red"), pc
 ```
 
 <p align="center">
-  <img width="460" height="370" src="https://github.com/rociobeatrizc/virtual-suitability-cube/blob/main/images/unbiased_biased_poster.png">
+  <img width="430" height="300" src="https://github.com/rociobeatrizc/virtual-suitability-cube/blob/main/images/unbiased_biased_poster.png">
 </p>
 
 ``` r
