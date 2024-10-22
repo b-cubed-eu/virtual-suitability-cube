@@ -151,7 +151,7 @@ presence.points <- sampleOccurrences(new.pres,
 </p>
 
 
-## Hypervolume
+## Hypervolume as ecological niche
 Hutchinson defined an ecological niche as an n-dimensional volume in
 the environmental space where a species can maintain a viable population and persist along
 time (Sillero et al., 2021). The Hutchinsonian niche, or n-dimensional environmental space, is
@@ -361,14 +361,26 @@ legend("topright", legend = c("Unbiased", "Biased"), col = c("black", "red"), pc
   <img width="430" height="300" src="https://github.com/rociobeatrizc/virtual-suitability-cube/blob/main/images/unbiased_biased_poster.png">
 </p>
 
+
+## Unbiased vs biased hypervolume
+We construct hypervolumes starting from 40 occurrences, increasing by 30 occurrences each time up to the maximum number.
+
+Using the Loess method, a powerful but simple strategy for fitting smooth curves to empirical data (Loess: a nonparametric, graphical tool for depicting relationships between variables, William G. Jacoby) within the geom_smooth() function of ggplot, we obtain as output an accumulation curve. 
+
+If the curve saturates around a certain value, the occurrences adequately represent all suitable environments for the species (Arlè). 
+
+Alternatively, if the species shows a more linear relationship, gaps in the spatial data might have prevented a complete representation of the observed native niche breadth (Hortal et al., 2008).  
+
+The accumulation curve will be simulated 10 times in order to obtain an average. 
+
 ``` r
-# List with the occurrences we want to test
+# list with the occurrences we want to test
 hyp_steps <- c(seq(from = 40, to = stop, by = 30), stop)
 
-# Empty list 
+# empty list 
 all_sim <- list()
 
-# For cycle for simulations
+# for cycle for simulations
 for (sim in 1:num_sim) {
   
   list_output <- list()
@@ -382,7 +394,7 @@ for (sim in 1:num_sim) {
   
 }
 
-# All simulations in one df
+# all simulations in one df
 combined_df <- do.call(rbind, lapply(seq_along(all_sim), function(sim) {
   do.call(rbind, lapply(all_sim[[sim]], function(df) {
     df$sim <- sim
@@ -391,10 +403,10 @@ combined_df <- do.call(rbind, lapply(seq_along(all_sim), function(sim) {
 }))
 
 
-# Mean predictions (LOESS): x sequence 
+# mean predictions (LOESS): x sequence 
 x_seq <- seq(min(combined_df$n_occ), max(combined_df$n_occ), length.out = 100)
 
-# Mean predictions: LOESS method
+# mean predictions: LOESS method
 loess_predictions <- lapply(unique(combined_df$n_occ), function(n) {
   preds <- sapply(all_sim, function(lista) {
     loess_fit <- loess(iperv ~ n_occ, data = do.call(rbind, lista))
@@ -406,10 +418,10 @@ loess_predictions <- lapply(unique(combined_df$n_occ), function(n) {
 })
 
 
-# Mean df
+# mean df
 pred_mean <- do.call(rbind, loess_predictions)
 
-# Plot: unbiased hypervolume
+# plot: unbiased hypervolume
 ggplot() +
   geom_smooth(data = combined_df, aes(x = n_occ, y = iperv, group = sim), 
               method = "loess", se = FALSE, color = "grey", size = 0.5, alpha = 0.5) +
@@ -420,7 +432,12 @@ ggplot() +
        y = "Hypervolume") +
   theme_minimal()
 
-## Hypervolume of biased occurrences (road driven: biased sampling)
+```
+
+unbiased_hyp
+
+``` r
+## hypervolume of biased occurrences (road driven: biased sampling)
 biased_df <- points_biased %>%
   as.data.frame() %>%
   .[,-c(5:8)]
@@ -535,8 +552,6 @@ write.csv(final_results, file = "specie_1.csv", row.names = FALSE)
 ```
 
 ``` r
-
-
 ############ Estimating the Area Of Applicability of spatial prediction models ###############
 # https://hannameyer.github.io/CAST/articles/cast02-AOA-tutorial.html
 
