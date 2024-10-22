@@ -147,7 +147,7 @@ presence.points <- sampleOccurrences(new.pres,
 ```
 
 <p align="center">
-  <img width="650" height="300" src="https://github.com/rociobeatrizc/virtual-suitability-cube/blob/main/images/vsc_page-0003.jpg">
+  <img width="650" height="250" src="https://github.com/rociobeatrizc/virtual-suitability-cube/blob/main/images/vsc_page-0003.jpg">
 </p>
 
 
