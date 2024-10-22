@@ -157,9 +157,9 @@ the environmental space where a species can maintain a viable population and per
 time (Sillero et al., 2021). The Hutchinsonian niche, or n-dimensional environmental space, is
 defined as the hypervolume (Blonder et al., 2014). 
 
-The calculation of the hypervolume is performed using the 'hypervolume_gaussian' function from the R package hypervolume, developed by Blonder et al. 'hypervolume_gaussian' constructs a hypervolume by building a gaussian kernel density estimate on an adaptive grid of random points wrapped around the original data points. 
+The calculation of the hypervolume is performed using the 'hypervolume_gaussian' function from the R package hypervolume, developed by Blonder et al. `hypervolume_gaussian` constructs a hypervolume by building a gaussian kernel density estimate on an adaptive grid of random points wrapped around the original data points. 
 
-However, since we aim to calculate not just one but multiple hypervolumes as we increase and accumulate occurrences, hypervolume_gaussian will be at the core of a function that, starting from a single random occurrence, progressively increases the number of occurrences (and their corresponding bioclimatic variables) and calculates the hypervolume. This increment, a subsample of the original sample, is random and without replacement.
+However, since we aim to calculate not just one but multiple hypervolumes as we increase and accumulate occurrences, `hypervolume_gaussian` will be at the core of a function that, starting from a single random occurrence, progressively increases the number of occurrences (and their corresponding bioclimatic variables) and calculates the hypervolume. This increment, a subsample of the original sample, is random and without replacement.
 
 ```r
 ## preliminary Steps for Niche Analysis
@@ -223,22 +223,23 @@ acc_curve <- function(x, no) {
   return(list(result))
 }
 ```
-
+## Roadside Bias 
+To obtain a subsample that shows sampling bias, we first need to associate each point in the original dataset with the distance to the nearest road. Instead of calculating this distance for each point, we chose to rasterize the distances for simplicity: this way, each pixel will have a value representing the distance to the nearest road. Points are then projected onto this raster, and their respective distance values are extracted 
 
 ``` r
 
 ## Roadside bias
-# Create raster with distances from roads
+# create raster with distances from roads
 roads_vect <- terra::vect(osm_aoi_roads$geometry)
 
-# Turn into SpatRaster object
+# turn into SpatRaster object
 raster_roads <- as(mydata_backup[[1]], "SpatRaster")
 
-# Rasterize distances
+# rasterize distances
 r <- terra::rasterize(roads_vect, raster_roads)
 d <- distance(r, unit = "km") 
 
-## Plot: distance from roads
+## plot: distance from roads
 d_rast <- d %>% raster() %>% crop(., aoi_sp) %>% mask(., aoi_sp)
 raster_df_dist <- as.data.frame(rasterToPoints(d_rast), xy = TRUE)
 value_column <- names(raster_df_dist)[3]
@@ -258,7 +259,16 @@ ggplot() +
     axis.title.x = element_blank(),
     axis.title.y = element_blank()
   )
+```
+As the distance from the road network increases, the probability of sampling a species will decrease. We can simulate this situation with the following probability function
 
+$$P(sampling) = 1 - \dfrac{log(c\cdot min\_dist)}{log(c \cdot max(min\_dist))}$$
+
+We used this function to transform distances into probability values: for each distance value, there is a probability for a point to be sampled. Once again, we obtain a raster, making it easy to extract the probability value.
+
+After setting a probability threshold, we selected the points that fall on pixels containing values equal to or above the threshold. We decided to select the points that have a 100% probability of being sampled, i.e., those located on roads or in their immediate surroundings
+
+``` r
 
 ## Extract distances
 d_raster <- d %>% raster()
@@ -296,6 +306,12 @@ ggplot() +
     axis.title.x = element_blank(),
     axis.title.y = element_blank()
   )
+
+```
+
+``` r
+
+
 
 
 ## Occurrences as points
