@@ -363,7 +363,7 @@ legend("topright", legend = c("Unbiased", "Biased"), col = c("black", "red"), pc
 ## Unbiased vs biased hypervolume
 We construct hypervolumes starting from 40 occurrences, increasing by 30 occurrences each time up to the maximum number.
 
-Using the Loess method, a powerful but simple strategy for fitting smooth curves to empirical data (Loess: a nonparametric, graphical tool for depicting relationships between variables, William G. Jacoby) within the geom_smooth() function of ggplot, we obtain as output an accumulation curve. 
+Using the Loess method, a powerful but simple strategy for fitting smooth curves to empirical data within the `geom_smooth()` function of ggplot, we obtain as output an accumulation curve. 
 
 If the curve saturates around a certain value, the occurrences adequately represent all suitable environments for the species (Arlè). 
 
