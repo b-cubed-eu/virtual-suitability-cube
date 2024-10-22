@@ -85,6 +85,10 @@ Chelsa.Clim.download(
 
 ##  upload bioclimatic variables
 # string containing the names of raster files
+# NB: The following pattern means that we want to read *.tif files which are
+# included in a directory that contains the word 'clipped'
+# (that's the style adopted by ClimDatDownloadR package)
+# Feel free to modify it if you have different requirements
 rastlist <- list.files(path ="my/path/bio/ChelsaV2.1Climatologies/clipped_2024-09-18_10-46-34", pattern = "CHELSA", full.names = TRUE)
 
 # using the list of names, all the files are imported into a single raster package
@@ -101,45 +105,37 @@ mydata <- mydata %>% crop(., aoi_sp) %>% mask(., aoi_sp)
 mydata_backup <- mydata
 ```
 ## Virtual Species
-Generating random species from known environmental data allows controlling the factors that can influence the distribution of real data.  To create a series of occurrence points for a species, it is necessary to go through 3 steps
-``` r
-## Random Virtual Species: run every time you want to create a virtual species, from the beginning.
+Generating random species from known environmental data allows controlling the factors that can influence the distribution of real data. Questo può essere fatto con il pacchetto virtualspecies.  
+To create a series of occurrence points for a species, it is necessary to go through 3 steps. All'interno di ciascuno step si possono regolare dei parametri il cui significato è spiegato nel tutorial virtualspecies:
 
-## Suitability map generation
+1. By intersecting bioclimatic data, the first output obtained is a **suitability map**
+2. The suitability map is converted into a binary **presence/absence map** through a probability function (logistic curve) that associates the suitability value with the probability of finding the virtual species for each pixel. This subset of the environmental niche that is actually occupied by the species corresponds to the realized niche (Hutchinson, 1957).
+3. The third step consists of generating, within the presence/absence raster, a series of occurrence points. 
+
+
+``` r
+## Random Virtual Species: run every time you want to create a virtual species.
+
+## step 1: suitability map generation
 random.sp <- generateRandomSp(raster.stack = mydata,
                               convert.to.PA = FALSE,
-                              # How to combine response functions
+                              # how to combine response functions
                               species.type = "multiplicative",
-                              # Random approach between PCA and response function
+                              # random approach between PCA and response function
                               approach = "response",
-                              # Response function
+                              # response function
                               relations = "gaussian",
-                              # Realistic species
+                              # realistic species
                               realistic.sp = TRUE,
                               plot = FALSE)
 
-
-# Suitability plot
-plot(random.sp$suitab.raster, col = plasma(500, alpha = 1, begin = 0, end = 1, direction = 1))
-title("Suitability Map", outer=TRUE, line=-1)
-dev.off()
-
-# Response functions
-# plotResponse(random.sp)
-
-## Presence/Absence: requires defining the parameters alpha, beta, and species prevalence
+## step 2: Presence/Absence: requires defining the parameters alpha, beta, and species prevalence
 new.pres <-convertToPA(random.sp,
                        beta = "random",
                        alpha = -0.05, plot = FALSE,
                        species.prevalence = 0.01)
 
-
-# Presence/Absence plot
-plot(random.sp$suitab.raster)
-plot(new.pres$pa.raster, col = c("yellowgreen", "deeppink"), box = FALSE, axes = FALSE)
-title("Presence-Absence Map", outer=TRUE, line=-1)
-
-## Occurences
+## step 3: occurences
 presence.points <- sampleOccurrences(new.pres,
                                      n = 200,
                                      type = "presence only",
@@ -148,14 +144,8 @@ presence.points <- sampleOccurrences(new.pres,
                                      detection.probability = 1,
                                      correct.by.suitability = TRUE,
                                      plot = FALSE)
-
-# Plot: occurrences
-par(mfrow=c(1,1), mar=c(2,2,2,0.5)) 
-plot(random.sp$suitab.raster, col = plasma(500, alpha = 1, begin = 0, end = 1, direction = 1), axes = FALSE, box = FALSE)
-points(presence.points$sample.points, col = "black", pch = 19, cex=0.3)
-title("Occurrences", outer=TRUE, line=-1)
-dev.off()
 ```
+plot with the steps
 
 ```r
 ## Preliminary Steps for Niche Analysis
