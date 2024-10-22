@@ -317,33 +317,33 @@ ggplot() +
   <img width="460" height="370" src="https://github.com/rociobeatrizc/virtual-suitability-cube/blob/main/images/sampling_prob_poster.png">
 </p>
 
+Ora associamo a ciascun punto la propria probabilità di essere campionato e filtriamo quelli la cui probabilità è 100%: dal campionamento randomico, si ottiene un sottoinsieme che presenta un bias spaziale, dato che è stato campionato preferenzialmente lungo il reticolo stradale
 
 ``` r
-
-## Occurrences as points
+## occurrences as points
 coord_occ <- terra::vect(filtered_occ, geom = c("x","y"), crs="epsg:4326")
 
 
-# Add probability value
+# add probability value
 points_biased <- coord_occ %>%
   cbind(terra::extract(prob_raster, ., ID = FALSE)) %>%
   subset(.$layer == 1)
 
 
-## Hypervolume of occurrences (random sampled: null model) 
-# Num. simulations each species
+## hypervolume of occurrences (random sampled: null model) 
+# num. simulations each species
 num_sim <- 3
 
-# Set stop point according to the number of biased occurrences: same sampling effort
+# set stop point according to the number of biased occurrences: same sampling effort
 nrow(points_biased)
 nrow(occurrences_values)
 stop <-  ceiling(nrow(points_biased) + 0.2 * (nrow(points_biased)))
 
-# Random subsample of occurrences from null model: 20%
+# random subsample of occurrences from null model: 20%
 occurrences_values <- occurrences_values[sample(nrow(occurrences_values), stop), ]
 
-## Plot: map with unbiased-biased points
-# Index
+## plot: map with unbiased-biased points
+# index
 indices <- rownames(occurrences_values)
 indices <- as.numeric(indices)
 filtered_coord_occ <- coord_occ[indices, ]
@@ -355,9 +355,13 @@ points(filtered_coord_occ, cex = 0.6)
 points(points_biased, col = "red", cex = 0.6)
 legend("topright", legend = c("Unbiased", "Biased"), col = c("black", "red"), pch = 19, cex = 0.8,
        xpd = TRUE, y.intersp = 0.8)
+```
 
-dev.off()
+<p align="center">
+  <img width="460" height="370" src="https://github.com/rociobeatrizc/virtual-suitability-cube/blob/main/images/unbiased_biased_poster.png">
+</p>
 
+``` r
 # List with the occurrences we want to test
 hyp_steps <- c(seq(from = 40, to = stop, by = 30), stop)
 
