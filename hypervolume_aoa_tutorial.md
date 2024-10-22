@@ -21,6 +21,7 @@ library(osmextract)
 # set working directory
 setwd("my/path")
 ```
+## Input data
 Carichiamo i file vettoriali: l'area di studio e il reticolo stradale da Open Street Map ([osmextract R package](https://docs.ropensci.org/osmextract/))
 
 ``` r
@@ -91,43 +92,16 @@ mydata <- stack(rastlist)
 
 # change data names
 names(mydata) <- c("bio01", "bio07", "bio13", "bio14")
-```
 
-``` r
-# Crop and mask by region borders
+# crop and mask by region borders
 aoi_sp <- sf::as_Spatial(aoi)
 mydata <- mydata %>% crop(., aoi_sp) %>% mask(., aoi_sp)
 
-## Plot: roads on raster
-raster_df <- as.data.frame(rasterToPoints(mydata[[1]]), xy = TRUE)
-value_column <- names(raster_df)[3]
-
-ggplot() +
-  # Add raster
-  geom_raster(data = raster_df, aes_string(x = "x", y = "y", fill = value_column)) +
-  scale_fill_viridis_c() + 
-  # Roads
-  geom_sf(data = osm_aoi_roads$geometry, color = "black", size = 0.5) +
-  theme_minimal() +
-  labs(title = "Roads",
-       fill = "Temperature") +
-  coord_sf()
-
-## Plot: bioclimatic variables
-# Labels 
-titles <- c("Mean Annual Temperature", "Annual Precipitation", 
-            "Amount of Precipitation in Wettest Month", "Amount of Precipitation in Driest Month")
-# Plot all together
-par(mfrow=c(2,2), mar=c(2,2,2,0.5))
-for (i in 1:nlayers(mydata)) {
-  plot(mydata[[i]], main=titles[i], col=magma(500, alpha = 1, begin = 0, end = 1, direction = 1), legend.width=1.5, legend.shrink=0.75, axes=FALSE, box=FALSE)
-}
-dev.off()
-
-## Original data: will be useful later
+# original data: will be useful later
 mydata_backup <- mydata
 ```
-
+## Virtual Species
+Generating random species from known environmental data allows controlling the factors that can influence the distribution of real data.  To create a series of occurrence points for a species, it is necessary to go through 3 steps
 ``` r
 ## Random Virtual Species: run every time you want to create a virtual species, from the beginning.
 
