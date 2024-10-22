@@ -262,7 +262,7 @@ ggplot() +
 ```
 As the distance from the road network increases, the probability of sampling a species will decrease. We can simulate this situation with the following probability function
 
-$$P(sampling) = 1 - \dfrac{log(c\cdot min\_dist)}{log(c \cdot max(min\_dist))}$$
+$$P(sampling) = 1 - \dfrac{log(c\cdot min_dist)}{log(c \cdot max(min_dist))}$$
 
 We used this function to transform distances into probability values: for each distance value, there is a probability for a point to be sampled. Once again, we obtain a raster, making it easy to extract the probability value.
 
