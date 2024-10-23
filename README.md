@@ -402,6 +402,19 @@ ggplot(df_long, aes(x = species, y = suitability, color = species)) +
 </p>
 
 
+The following is an example of suitability over the course of a whole year (12 months) for 5 different species in two distinct locations in the Luxembourg area.
+
+<p align="center">
+  <img width="500" height="350" src="https://github.com/rociobeatrizc/virtual-suitability-cube/blob/main/images/2cells.jpg">
+</p>
+
+We can imagine the structure of the cube in this way, where the temporal layers are 12
+
+<p align="center">
+  <img width="500" height="350" src="https://github.com/rociobeatrizc/virtual-suitability-cube/blob/main/images/5sp_cube.jpg">
+</p>
+
+
 ## References
 * virtualspecies, an R package to generate virtual species distributions (2018), Leroy B. et al., [DOI](https://doi.org/10.1111/ecog.01388)
 * Pebesma E, Bivand R (2023). Spatial Data Science: With applications in R. Chapman and Hall/CRC, London. DOI:10.1201/9780429459016, [https://r-spatial.org/book/](https://r-spatial.org/book/)
