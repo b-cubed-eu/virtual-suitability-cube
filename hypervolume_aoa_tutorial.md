@@ -171,7 +171,7 @@ presence.points <- sampleOccurrences(new.pres,
 </p>
 
 
-## Hypervolume as ecological niche
+## Ecological niche as hypervolume
 Hutchinson defined an ecological niche as an n-dimensional volume in the environmental space where a species can maintain a viable population and persist along
 time. The Hutchinsonian niche, or n-dimensional environmental space, is defined as the hypervolume (Blonder et al., 2014). 
 
@@ -563,15 +563,13 @@ ggplot() +
 </p>
 
 ``` 
+## Area of Applicability
+We want to utilize this method not to evaluate the model's performance but to assess the quality of the starting data based on their predictive capacity when used to build a model. Specifically, we aim to verify whether the same model can provide more spatial information, in terms of pixels, when constructed on an unbiased dataset.
+The model built on the unbiased dataset will be called the **null model**, while the one built on the biased dataset will be the **biased model**.
 
 ``` r
-############ Estimating the Area Of Applicability of spatial prediction models ###############
-# https://hannameyer.github.io/CAST/articles/cast02-AOA-tutorial.html
-
-
 ### AOA for Spatially Clustered Data: Null Model vs Biased
 ###  Null model
-
 
 ## Model training
 # A machine learning algorithm will be applied to learn the relationships between predictors and response
