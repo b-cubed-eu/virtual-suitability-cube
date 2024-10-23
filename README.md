@@ -5,13 +5,14 @@ Milestone 4
 
 
 # Virtual Suitability Cube
-Species suitability refers to how favorable an environment is for a species to survive, reproduce, and grow in a specific area and time. It takes into account factors like climate, landscape, and resource availability, which affect where a species can thrive.
+Species suitability refers to how favorable an environment is for a species to survive, reproduce, and grow in a specific area and time. It takes into account factors like climate, landscape, and resource availability.
 
-Calculating suitability involves using **Species Distribution Models** (SDMs). These models utilize environmental data and species occurrence data to predict where a species is most likely to survive, both now and in the future. SDMs help identify suitable habitats, forecast the movements of invasive species, and illustrate how species distributions might change due to factors like climate change. They are essential for conservation, allowing us to study how species interact with their environment and make informed decisions to protect biodiversity.
+
+Species Distribution Models (SDMs), also known as Environmental Niche Models (ENMs), are tools that use environmental and species occurrence data to study and predict the distribution of species across time and space. SDMs help identify suitable habitats, forecast the movements of invasive species, and illustrate how species distributions might change due to factors like climate change. They are essential for conservation, allowing us to study how species interact with their environment and make informed decisions to protect biodiversity.
 
 Studying species suitability under different environmental conditions is important for understanding population dynamics, planning conservation actions, and monitoring the effects of climate change and human activities on ecosystems. With this knowledge, we can make better decisions on how to protect habitats and species sustainably.
 
-To facilitate the observation of suitability for multiple species over time and space, we developed a framework that uses **data cubes**, multidimensional arrays that organize data in a structured way. In this tutorial, we outline the steps to create a stars object, which includes three dimensions: time, space (represented as grid cells), and species, with suitability as the main attribute. Stars objects can be sliced, aggregated along one of the dimensions, and analyzed, making them ideal for studying species suitability.
+To facilitate the observation of suitability for multiple species over time and space, we developed a framework that uses **Data Cubes**, multidimensional arrays that organize data in a structured way. In this tutorial, we outline the steps to create a **stars** object, which includes three dimensions: time, space (represented as grid cells), and species, with suitability as the main attribute. Stars objects can be sliced, aggregated along one of the dimensions, and analyzed, making them ideal for studying species suitability.
 
 For demonstrating the structure of the data cube, we use **virtual species**, which are artificially generated species with known suitability maps based on climate data. The main steps include combining climate data to calculate the suitability of two different species over time and in the same area, then merging these species into a single stars object.
 
