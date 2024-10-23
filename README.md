@@ -398,7 +398,7 @@ ggplot(df_long, aes(x = species, y = suitability, color = species)) +
     panel.border = element_rect(color = "black", fill = NA, size = 0.))
 ```
 <p align="center">
-  <img width="500" height="350" src="https://github.com/rociobeatrizc/virtual_suitability_cube/blob/main/images/boxplot.png">
+  <img width="550" height="330" src="https://github.com/rociobeatrizc/virtual_suitability_cube/blob/main/images/boxplot.png">
 </p>
 
 
@@ -411,7 +411,7 @@ The following is an example of suitability over the course of a whole year (12 m
 We can imagine the structure of the cube in this way, where the temporal layers are 12
 
 <p align="center">
-  <img width="500" height="500" src="https://github.com/rociobeatrizc/virtual-suitability-cube/blob/main/images/5sp_cube.jpg">
+  <img width="450" height="450" src="https://github.com/rociobeatrizc/virtual-suitability-cube/blob/main/images/5sp_cube.jpg">
 </p>
 
 
