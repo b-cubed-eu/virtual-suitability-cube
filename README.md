@@ -297,7 +297,7 @@ ggplot() +
 ```
 
 <p align="center">
-  <img width="400" height="350" src="https://github.com/rociobeatrizc/virtual_suitability_cube/blob/main/images/grid_lux_coordinates.png">
+  <img width="350" height="400" src="https://github.com/rociobeatrizc/virtual_suitability_cube/blob/main/images/grid_lux_coordinates.png">
 </p>
 
 ```r
