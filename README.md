@@ -405,7 +405,7 @@ ggplot(df_long, aes(x = species, y = suitability, color = species)) +
 The following is an example of suitability over the course of a whole year (12 months) for 5 different species in two distinct locations in the Luxembourg area.
 
 <p align="center">
-  <img width="700" height="500" src="https://github.com/rociobeatrizc/virtual-suitability-cube/blob/main/images/2cells.jpg">
+  <img width="900" height="650" src="https://github.com/rociobeatrizc/virtual-suitability-cube/blob/main/images/2cells.jpg">
 </p>
 
 We can imagine the structure of the cube in this way, where the temporal layers are 12
