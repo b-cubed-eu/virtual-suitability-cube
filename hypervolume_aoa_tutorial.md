@@ -2,19 +2,19 @@
 
 To enhance our understanding of biodiversity under changing climatic conditions, **Species Distribution Models (SDMs)**, also known as Ecological Niche Models (ENMs), have emerged as a powerful tool to characterize species' niches and quantify their ecological requirements.  
 
-In spite of the rapid development of methodologies, theoretical constraints still exist in SDMs (Austin 2002; Huston 2002; Wiens 2002). For example, a significant methodological assumption required by the use of SDMs is the need for unbiased data. (Araujo & Guisan, 2006;  Peterson et al., 2011). 
+In spite of the rapid development of methodologies, theoretical constraints still exist in SDMs. For example, a significant methodological assumption required by the use of SDMs is the need for unbiased data. 
 
 **Sampling bias** is a considerable issue when creating large-scale distribution models. It is likely to occur when data are collected without using a planned sample strategy.
 One of the most recognized forms of bias in distributional data is the high concentration of observations (or collection sites) along **roads**.
 
 The aim of this tutorial is to propose a method that shows how subsampling due to roadside bias affects niche completeness.
 
-This will be achieved by generating a set of virtual occurrences using the R package `virtualspecies` (Leroy 2016), simulating an erroneous dataframe with bias with respect to a street grid, and for both dataframes, calculating the **hypervolume** as occurrences increase. 
+This will be achieved by generating a set of virtual occurrences using the R package `virtualspecies` ([Leroy, 2016](https://borisleroy.com/files/virtualspecies-tutorial.html)), simulating an erroneous dataframe with bias with respect to a street grid, and for both dataframes, calculating the **hypervolume** as occurrences increase. 
 
 In this way, we will have two accumulation curves that relate the number of occurrences to the hypervolume for both the unbiased dataset and the biased one. 
 Quantifying the hypervolume difference provides insight into the completeness of the ecological niche, but it lacks spatial information. 
 
-To provide this information, we will use the Area Of Applicability (Meyer, 2021), defined as the region where a predictive model can reliably be applied based on the relationships it learned from the training data.
+To provide this information, we will use the Area Of Applicability ([Meyer, 2021](https://hannameyer.github.io/CAST/articles/cast02-AOA-tutorial.html), defined as the region where a predictive model can reliably be applied based on the relationships it learned from the training data.
 
 The Area Of Applicability was developed to evaluate the model's performance and its ability to generalize to new areas. However, since our focus is on the data and their biases rather than the model itself, we will generate the same model using the two datasets we created before, one unbiased and one biased.
 
@@ -125,7 +125,7 @@ mydata <- mydata %>% crop(., aoi_sp) %>% mask(., aoi_sp)
 mydata_backup <- mydata
 ```
 ## Virtual Species
-Generating random species from known environmental data allows controlling the factors that can influence the distribution of real data. Questo può essere fatto con il pacchetto **virtualspecies** [Leroy, 2018](https://borisleroy.com/files/virtualspecies-tutorial.html).  
+Generating random species from known environmental data allows controlling the factors that can influence the distribution of real data. This can be done through `virtualspecies` R package.  
 To create a series of occurrence points for a species, it is necessary to go through 3 steps. Within each step, you can adjust parameters whose meaning is explained in the virtualspecies tutorial.
 
 1. By intersecting bioclimatic data, the first output obtained is a **suitability map**
@@ -173,9 +173,9 @@ presence.points <- sampleOccurrences(new.pres,
 
 ## Hypervolume as ecological niche
 Hutchinson defined an ecological niche as an n-dimensional volume in the environmental space where a species can maintain a viable population and persist along
-time (Sillero et al., 2021). The Hutchinsonian niche, or n-dimensional environmental space, is defined as the hypervolume (Blonder et al., 2014). 
+time. The Hutchinsonian niche, or n-dimensional environmental space, is defined as the hypervolume (Blonder et al., 2014). 
 
-The calculation of the hypervolume is performed using the `hypervolume_gaussian` function from the R package **hypervolume** [Blonder, 2014](https://onlinelibrary.wiley.com/doi/10.1111/geb.12146). `hypervolume_gaussian` constructs a hypervolume by building a gaussian kernel density estimate on an adaptive grid of random points wrapped around the original data points. 
+The calculation of the hypervolume is performed using the `hypervolume_gaussian` function from the R package `hypervolume` [Blonder, 2014](https://onlinelibrary.wiley.com/doi/10.1111/geb.12146). `hypervolume_gaussian` constructs a hypervolume by building a gaussian kernel density estimate on an adaptive grid of random points wrapped around the original data points. 
 
 However, since we aim to calculate not just one but multiple hypervolumes as we increase and accumulate occurrences, `hypervolume_gaussian` will be at the core of a function that, starting from a single random occurrence, progressively increases the number of occurrences (and their corresponding bioclimatic variables) and calculates the hypervolume. This increment, a subsample of the original sample, is random and without replacement.
 
