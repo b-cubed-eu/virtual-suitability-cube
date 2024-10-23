@@ -1,5 +1,4 @@
-# Evaluating the impact of sampling bias on ecological niche
-
+# Evaluating the impact of sampling bias on the measurement of the ecological niche
 To enhance our understanding of biodiversity under changing climatic conditions, **Species Distribution Models (SDMs)**, also known as Ecological Niche Models (ENMs), have emerged as a powerful tool to characterize species' niches and quantify their ecological requirements.  
 
 In spite of the rapid development of methodologies, theoretical constraints still exist in SDMs. For example, a significant methodological assumption required by the use of SDMs is the need for unbiased data. 
