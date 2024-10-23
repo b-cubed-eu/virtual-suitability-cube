@@ -1,3 +1,23 @@
+# Evaluating the impact of sampling bias on ecological niche
+
+To enhance our understanding of biodiversity under changing climatic conditions, **Species Distribution Models (SDMs)**, also known as Ecological Niche Models (ENMs), have emerged as a powerful tool to characterize species' niches and quantify their ecological requirements.  
+
+In spite of the rapid development of methodologies, theoretical constraints still exist in SDMs (Austin 2002; Huston 2002; Wiens 2002). For example, a significant methodological assumption required by the use of SDMs is the need for unbiased data. (Araujo & Guisan, 2006;  Peterson et al., 2011). 
+
+**Sampling bias** is a considerable issue when creating large-scale distribution models. It is likely to occur when data are collected without using a planned sample strategy.
+One of the most recognized forms of bias in distributional data is the high concentration of observations (or collection sites) along **roads**.
+
+The aim of this tutorial is to propose a method that shows how subsampling due to roadside bias affects niche completeness.
+
+This will be achieved by generating a set of virtual occurrences using the R package `virtualspecies` (Leroy 2016), simulating an erroneous dataframe with bias with respect to a street grid, and for both dataframes, calculating the **hypervolume** as occurrences increase. 
+
+In this way, we will have two accumulation curves that relate the number of occurrences to the hypervolume for both the unbiased dataset and the biased one. 
+Quantifying the hypervolume difference provides insight into the completeness of the ecological niche, but it lacks spatial information. 
+
+To provide this information, we will use the Area Of Applicability (Meyer, 2021), defined as the region where a predictive model can reliably be applied based on the relationships it learned from the training data.
+
+The Area Of Applicability was developed to evaluate the model's performance and its ability to generalize to new areas. However, since our focus is on the data and their biases rather than the model itself, we will generate the same model using the two datasets we created before, one unbiased and one biased.
+
 ``` r
 # load packages
 library(CAST)
@@ -542,23 +562,7 @@ ggplot() +
   <img width="450" height="350" src="https://github.com/rociobeatrizc/virtual-suitability-cube/blob/main/images/2_hyperv_poster.png">
 </p>
 
-e salviamo i nostri valori
-
-``` r
-
-## useful values 
-# Convergence values
-final_unbiased <- tail(pred_mean, 1)
-final_biased <- tail(pred_mean_b, 1)
-final_results <- data.frame(
-  type = c("unbiased", "biased"),
-  n_occ = c(final_unbiased$n_occ, final_biased$n_occ),
-  iperv = c(final_unbiased$iperv_mean, final_biased$iperv_mean)
-)
-
-# CSV
-write.csv(final_results, file = "specie_1.csv", row.names = FALSE)
-```
+``` 
 
 ``` r
 ############ Estimating the Area Of Applicability of spatial prediction models ###############
