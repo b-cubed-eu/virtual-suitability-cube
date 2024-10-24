@@ -9,7 +9,8 @@
 *.shx
 *.xls*
 *_files
-.DS_Store
+ # Mac OS
+ .DS_Store
 .RData
 .Renviron
 .Rhistory
