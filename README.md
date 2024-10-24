@@ -350,16 +350,15 @@ print(cube_sp1sp2)
 ```
 
 Let's suppose we have a specific point in space: we want to investigate the suitability of the two species at that location
-
+With `pull` function you can extract the attributes in a specific point of space and time.
 ```r
 # first, we need to identify the corresponding cell for that location.
 which_cell <- st_sf(geometry = st_sfc(st_point(c(5.5, 49.0)), crs = 4326))  %>%  st_join(., lux_grid) 
 print(which_cell$id)
 # [1] 10
 
-# This object provides, for each species (,,1) and (,,2), the suitability in January and February in cell 10.
-
-# In the first case, it decreased; in the second, it increased.
+# this object provides, for each species (,,1) and (,,2), the suitability in January and February in cell 10
+# in the first case, it decreased; in the second, it increased.
 pull(cube_sp1sp2[,10,,], "suitability")
 # , , 1
 #          [,1]      [,2]
@@ -369,13 +368,13 @@ pull(cube_sp1sp2[,10,,], "suitability")
 #            [,1]        [,2]
 # [1,] 0.001298286 0.007460382
 
-# We can better visualize this information
+## we can better visualize this information this way:
 values_suit <- pull(cube_sp1sp2[,10,,], "suitability")
-# Transform values_suit into a long format without rewriting it
+# transform values_suit into a long format without rewriting it
 df_long <- melt(values_suit)
 colnames(df_long) <- c("cell", "time", "species", "suitability")
 
-# Convert time and species into factors
+# convert time and species into factors
 df_long$time <- factor(df_long$time, labels = c("Jan", "Feb"))
 df_long$species <- factor(df_long$species, labels = c("Species 1", "Species 2"))
 
