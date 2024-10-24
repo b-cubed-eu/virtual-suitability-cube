@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Cortes Lobos"
+  given-names: "Rocio Beatriz"
+  orcid: "https://orcid.org/0009-0004-8440-958X"
+- family-names: "Di Musciano"
+  given-names: "Michele"
+  orcid: "https://orcid.org/0000-0002-3130-7270"
+- family-names: "Matilde"
+  given-names: "Martini"
+  orcid: "https://orcid.org/0009-0003-5612-925X"
+- family-names: "Rocchini"
+  given-names: "Duccio"
+  orcid: "https://orcid.org/0000-0003-0087-0594"
+title: "virtual-suitability-cube"
+version: 1.0.0
+doi: 10.5281/zenodo.1234
+date-released: 2024-10-24
+url: "https://github.com/b-cubed-eu/virtual-suitability-cube"
