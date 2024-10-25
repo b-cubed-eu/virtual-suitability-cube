@@ -3,6 +3,8 @@
 ## Description
 Scripts to build suitability data cubes and assess the impact of sampling bias when measuring ecological niche
 Milestone MS20: Code development for predictive habitat suitability modelling 
+* Virtual Suitability Cube building: [code] (https://github.com/b-cubed-eu/virtual-suitability-cube/blob/main/virtual_suitability_cube.R) and [tutorial](https://github.com/b-cubed-eu/virtual-suitability-cube/blob/main/README.md)
+* Sampling bias measured on the ecological niche completeness: [code](https://github.com/b-cubed-eu/virtual-suitability-cube/blob/main/hypervolume_aoa.R) and [tutorial](https://github.com/b-cubed-eu/virtual-suitability-cube/blob/main/tutorials/hypervolume_aoa_tutorial.md)
 
 ### Authors
 Rocìo Beatriz Cortès Lobos (Unibo), Matilde Martini (Unibo), Michele Di Musciano (UnivAQ), Duccio Rocchini (Unibo)
@@ -422,3 +424,10 @@ We can imagine the structure of the cube in this way, where the temporal layers 
 * virtualspecies, an R package to generate virtual species distributions (2018), Leroy B. et al., [DOI](https://doi.org/10.1111/ecog.01388)
 * Pebesma E, Bivand R (2023). Spatial Data Science: With applications in R. Chapman and Hall/CRC, London. DOI:10.1201/9780429459016, [https://r-spatial.org/book/](https://r-spatial.org/book/)
 * Meyer H, Milà C, Ludwig M, Linnenbrink J, Schumacher F (2024). CAST: 'caret' Applications for Spatial-Temporal Models. R package version 1.0.2, [https://hannameyer.github.io/CAST/](https://github.com/HannaMeyer/CAST)
+* Gilardi A, Lovelace R (2024). osmextract: Download and Import Open Street Map Data Extracts. R package version 0.5.1.900, [https://github.com/ropensci/osmextract](https://docs.ropensci.org/osmextract/).
+* Predicting species distribution: offering more than simple habitat models, Guisan A., Thuiller W., 2005, [DOI](https://doi.org/10.1111/j.1461-0248.2005.00792.x)
+* A practical overview of transferability in species distribution modeling, Werkowska W., Marquez A., Real R., Acevedo P., 2017,  [DOI](https://cdnsciencepub.com/doi/abs/10.1139/er-2016-0045)
+* Effect of roadside bias on the accuracy of predictive maps produced by bioclimatic models, Kadmon R., Farber O., Danin A., 2004, [DOI](https://esajournals.onlinelibrary.wiley.com/doi/full/10.1890/02-5364)
+* The virtual ecologist approach: simulating data and observers, Zurell et al., 2010, [DOI](https://nsojournals.onlinelibrary.wiley.com/doi/full/10.1111/j.1600-0706.2009.18284.x)
+* The n-dimensional hypervolume, Blonder et al., 2014, [DOI](https://onlinelibrary.wiley.com/doi/full/10.1111/geb.12146)
+* The cumulative niche approach: a framework to assess the performance of ecological niche model projections, Arlè et al., 2024, [DOI](https://onlinelibrary.wiley.com/doi/full/10.1002/ece3.11060)
