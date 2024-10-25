@@ -5,7 +5,7 @@ Scripts to build suitability data cubes and assess the impact of sampling bias w
 Milestone MS20: Code development for predictive habitat suitability modelling 
 
 ### Authors
-Rocìo Beatriz Cortès Lobos, Matilde Martini, Michele Di Musciano, Duccio Rocchini
+Rocìo Beatriz Cortès Lobos (Unibo), Matilde Martini (Unibo), Michele Di Musciano (UnivAQ), Duccio Rocchini (Unibo)
 
 
 # Virtual Suitability Cube
