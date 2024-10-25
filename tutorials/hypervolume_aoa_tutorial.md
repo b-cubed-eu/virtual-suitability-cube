@@ -561,8 +561,7 @@ ggplot() +
   <img width="450" height="350" src="https://github.com/rociobeatrizc/virtual-suitability-cube/blob/main/images/2_hyperv_poster.png">
 </p>
 
-``` 
-## Area of Applicability
+# Area of Applicability
 We want to utilize this method not to evaluate the model's performance but to assess the quality of the starting data based on their predictive capacity when used to build a model. Specifically, we aim to verify whether the same model can provide more spatial information, in terms of pixels, when constructed on an unbiased dataset.
 The model built on the unbiased dataset will be called the **null model**, while the one built on the biased dataset will be the **biased model**.
 
@@ -603,10 +602,6 @@ model_null <- train(trainDat_null[,names(mydata_aoa)],
 
 print(model_null)
 
-# Variable Importance of each predictor
-plot(varImp(model_null, scale = F), col="black", main = "Importance of each predictor", axes =FALSE)
-
-
 ## Predict and calculate error 
 # The trained model is then used to make predictions for the entire area of interest
 prediction_null <- predict(mydata_aoa, model_null, na.rm=T)
@@ -614,38 +609,20 @@ prediction_null <- predict(mydata_aoa, model_null, na.rm=T)
 # The difference bewteen prediction and reference is the true prediction error 
 truediff_null <- abs(prediction_null - random.sp$suitab.raster)
 
-# Plot Prediction, Reference and Difference
-par(mfrow = c(1, 3)) 
-plot(prediction_null, main = "Prediction with RF", col = inferno(500, alpha = 1, begin = 0, end = 1, direction = 1), legend = FALSE)
-plot(random.sp$suitab.raster, main = "Reference", col = inferno(500, alpha = 1, begin = 0, end = 1, direction = 1))
-plot(truediff_null, main = "Difference", col = inferno(500, alpha = 1, begin = 0, end = 1, direction = 1))
-
-
-dev.off()
-
 ## The AOA calculation takes the model as input to extract the importance of the predictors, 
 # used as weights in multidimensional distance calculation.
 AOA_null <- aoa(mydata_aoa, model_null, LPD = TRUE, verbose = FALSE)
 
-# Features: DI, LPD, AOA
-print(AOA_null)
-
-
-par(mfrow = c(1, 3)) 
-# DI: normalized and weighted minimum distance to a nearest training data point 
-# divided by the average distance within the training data
-plot(AOA_null$DI, col = viridis(100), main = "DI")
-
-# LPD: absolute count of training data points
-plot(AOA_null$LPD, col = viridis(100), main = "LPD")
-
 # AOA: derived from the DI by using a threshold.
 plot(prediction_null, col=inferno(100), main = "Prediction for Area of Applicability")
 plot(AOA_null$AOA, col = c("grey","transparent"), add = T, plg = list(x = "topleft", box.col = "black", bty = "o", title = "AOA"))
+```
 
-dev.off()
+<p align="center">
+  <img width="450" height="350" src="https://github.com/b-cubed-eu/virtual-suitability-cube/blob/main/images/aoa_unbiased_poster.png">
+</p>
 
-
+``` r
 ## Biased points
 ###############################################################################################
 biased_sp_points <- points_biased %>% st_as_sf(., crs = 4326)
