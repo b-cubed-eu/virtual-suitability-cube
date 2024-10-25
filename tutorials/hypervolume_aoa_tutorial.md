@@ -562,33 +562,38 @@ ggplot() +
 </p>
 
 # Area of Applicability
-We want to utilize this method not to evaluate the model's performance but to assess the quality of the starting data based on their predictive capacity when used to build a model. Specifically, we aim to verify whether the same model can provide more spatial information, in terms of pixels, when constructed on an unbiased dataset.
+We want to utilize this method not to evaluate the model's performance but to assess the quality of the starting data based on their predictive capacity when used to build a model.
+
+We used Random Forest (Breiman, 2001) as our machine learning algorithm because it is widely used in environmental mapping (e.g., Bastin et al., 2019). For model training, we extracted the 4 predictors from the sampling data points.
+
+We obtain a subset of the original study area where suitability estimates can be made. By repeating this process for both the unbiased and the biased datasets, we can calculate the difference in the number of pixels between the two outputs. We expect that the area of applicability of a model calibrated on a randomly sampled dataset will be larger compared to that of a biased dataset
+
 The model built on the unbiased dataset will be called the **null model**, while the one built on the biased dataset will be the **biased model**.
 
 ``` r
 ### AOA for Spatially Clustered Data: Null Model vs Biased
-###  Null model
+###  null model
 
-## Model training
-# A machine learning algorithm will be applied to learn the relationships between predictors and response
+## model training
+# a machine learning algorithm will be applied to learn the relationships between predictors and response
 
-## Train data: must be converted in the format required by terra::extract
+## train data: must be converted in the format required by terra::extract
 pa_points <- presence.points$sample.points[,-(3:4)] %>% as.data.frame() %>% st_as_sf(., coords = c("x","y"), crs = 4326)
 
-# Raster data
+# raster data
 mydata_aoa <- rast(mydata_backup)
 
-# Subset of the original 200 points
+# subset of the original 200 points
 pa_points <- pa_points[rownames(occurrences_values), ]
 
-# From raster, extract corresponding values 
+# from raster, extract corresponding values 
 trainDat_null <- terra::extract(mydata_aoa, pa_points, na.rm = FALSE)
 
-# From raster, extract suitability values, NA omit, assign spatial reference
+# from raster, extract suitability values, NA omit, assign spatial reference
 trainDat_null$response <- terra::extract(random.sp$suitab.raster, pa_points, na.rm=FALSE, ID=FALSE)
 trainDat_null <- data.frame(trainDat_null, pa_points) %>% na.omit()
 
-## Train model for Spatially Clustered Data
+## train model for Spatially Clustered Data
 # train from CARET package: data train, data output, method (Random Forest) and Cross Validation 
 folds_null <- CreateSpacetimeFolds(trainDat_null, spacevar = "geometry", k = 4)
 
@@ -600,16 +605,14 @@ model_null <- train(trainDat_null[,names(mydata_aoa)],
                     tuneGrid = expand.grid(mtry = c(2:length(names(mydata_aoa)))),
                     trControl = trainControl(method ="cv", index = folds_null$index))
 
-print(model_null)
-
-## Predict and calculate error 
-# The trained model is then used to make predictions for the entire area of interest
+## predict and calculate error 
+# the trained model is then used to make predictions for the entire area of interest
 prediction_null <- predict(mydata_aoa, model_null, na.rm=T)
 
-# The difference bewteen prediction and reference is the true prediction error 
+# the difference bewteen prediction and reference is the true prediction error 
 truediff_null <- abs(prediction_null - random.sp$suitab.raster)
 
-## The AOA calculation takes the model as input to extract the importance of the predictors, 
+## the AOA calculation takes the model as input to extract the importance of the predictors 
 # used as weights in multidimensional distance calculation.
 AOA_null <- aoa(mydata_aoa, model_null, LPD = TRUE, verbose = FALSE)
 
@@ -619,26 +622,28 @@ plot(AOA_null$AOA, col = c("grey","transparent"), add = T, plg = list(x = "tople
 ```
 
 <p align="center">
-  <img width="450" height="350" src="https://github.com/b-cubed-eu/virtual-suitability-cube/blob/main/images/aoa_unbiased_poster.png">
+  <img width="500" height="400" src="https://github.com/b-cubed-eu/virtual-suitability-cube/blob/main/images/aoa_unbiased_poster.png">
 </p>
 
+Thanks to the AOA, we can see the extent of the area where Random Forest is capable of making predictions
+Now, let's see how it works if we train the algorithm on biased data
+
 ``` r
-## Biased points
-###############################################################################################
+## biased points
 biased_sp_points <- points_biased %>% st_as_sf(., crs = 4326)
 biased_sp_points <- biased_sp_points[,-(1:8)]
 
-# From raster, extract corresponding values 
+# from raster, extract corresponding values 
 trainDat_biased <- terra::extract(mydata_aoa, biased_sp_points, na.rm=FALSE)
 
-# From raster, extract suitability values 
+# from raster, extract suitability values 
 trainDat_biased$response <- terra::extract(random.sp$suitab.raster, biased_sp_points, na.rm = FALSE, ID=FALSE)
 trainDat_biased <- data.frame(trainDat_biased, biased_sp_points)
 
-# Omit NA
+# omit NA
 trainDat_biased <- na.omit(trainDat_biased)
-trainDat_biased
-## Train model
+
+## train model
 # train from CARET package: data train, data output, method (Random Forest) and Cross Validation 
 folds_biased <- CreateSpacetimeFolds(trainDat_biased, spacevar = "geometry", k = 10)
 set.seed(15)
@@ -649,107 +654,75 @@ model_biased <- train(trainDat_biased[,names(mydata_aoa)],
                       tuneGrid = expand.grid(mtry = c(2:length(names(mydata_aoa)))),
                       trControl = trainControl(method ="cv", index = folds_biased$index))
 
-print(model_null)
-
-# Variable Importance of each predictor
-plot(varImp(model_biased, scale = F), col="black")
-plotResponse(random.sp)
-
-## Predict and calculate error 
-# The trained model is then used to make predictions for the entire area of interest
+## predict and calculate error 
+# the trained model is then used to make predictions for the entire area of interest
 prediction_biased <- predict(mydata_aoa, model_biased, na.rm=T)
 
-# Difference bewteen prediction and reference: true prediction error 
+# difference bewteen prediction and reference: true prediction error 
 truediff_biased <- abs(prediction_biased - random.sp$suitab.raster)
 
-# Plot Prediction, Reference and Difference
-par(mfrow = c(1, 2)) 
-plot(prediction_biased, main = "Prediction with RF", col = inferno(500, alpha = 1, begin = 0, end = 1, direction = 1), legend = FALSE)
-plot(random.sp$suitab.raster, main = "Reference", col = inferno(500, alpha = 1, begin = 0, end = 1, direction = 1))
-
-dev.off()
-
-
-# Plot Prediction, Reference and Difference
-par(mfrow = c(1, 2)) 
-plot(prediction_biased, main = "Prediction with RF", col = inferno(500, alpha = 1, begin = 0, end = 1, direction = 1), legend = FALSE)
-plot(random.sp$suitab.raster, main = "Reference", col = inferno(500, alpha = 1, begin = 0, end = 1, direction = 1))
-plot(truediff_biased, main = "Difference", col = inferno(500, alpha = 1, begin = 0, end = 1, direction = 1))
-
+# Random Forest trained on unbiased and biased data
 par(mfrow = c(1, 2)) 
 plot(prediction_null, main = "RF Null Model", col = inferno(500, alpha = 1, begin = 0, end = 1, direction = 1), legend = FALSE)
 plot(prediction_biased, main = "RF Biased data", col = inferno(500, alpha = 1, begin = 0, end = 1, direction = 1))
-## The AOA calculation takes the model as input to extract the importance of the predictors 
+
+```
+
+<p align="center">
+  <img width="500" height="400" src="https://github.com/b-cubed-eu/virtual-suitability-cube/blob/main/images/rf_null_biased_poster.png">
+</p>
+
+
+``` r
+
+## the AOA calculation takes the model as input to extract the importance of the predictors 
 # used as weights in multidimensional distance calculation.
 AOA_biased <- aoa(mydata_aoa, model_biased, LPD = TRUE, verbose = FALSE)
-
-# Features: DI, LPD, AOA
-class(AOA_biased)
-print(AOA_biased)
-
-# Plotting the aoa object 
-# Shows the distribution of DI values within the training data and the DI of the new data.
-plot(AOA_biased)
-
-dev.off()
-
-plot(truediff_biased, col = viridis(100), main = "True Prediction Error")
-
-# DI: normalized and weighted minimum distance to a nearest training data point 
-# divided by the average distance within the training data
-plot(AOA_biased$DI, col = viridis(100), main = "DI")
-
-# LPD: absolute count of training data points
-plot(AOA_biased$LPD, col = viridis(100), main = "LPD")
-
 
 # AOA: derived from the DI by using a threshold.
 plot(prediction_biased, col=inferno(100), main = "Prediction for AOA (Biased)")
 plot(AOA_biased$AOA, col = c("grey","transparent"), add = T, plg = list(x = "topleft", box.col = "black", bty = "o", title = "AOA"))
+```
 
+<p align="center">
+  <img width="500" height="400" src="https://github.com/b-cubed-eu/virtual-suitability-cube/blob/main/images/aoa_biased_poster.png">
+</p>
 
-dev.off()
+If we compare the two outputs, we can immediately see that there is a difference in the extention of the prediction area: 
 
+```  r
 
-############################ Comparison ###############################################
-## Set same scale
 par(mfrow=c(1,2))
 plot(prediction_null, col=viridis(100), main = "Prediction for AOA (Null)")
 plot(AOA_null$AOA, col = c("grey","transparent"), add = T, plg = list(x = "topright", box.col = "black", bty = "o", title = "AOA"))
 
 plot(prediction_biased, col=viridis(100), main = "Prediction for AOA (Biased)")
 plot(AOA_biased$AOA, col = c("grey","transparent"), add = T, plg = list(x = "topright", box.col = "black", bty = "o", title = "AOA"))
+```
+<p align="center">
+  <img width="600" height="400" src="https://github.com/b-cubed-eu/virtual-suitability-cube/blob/main/images/aoa_biased_unbiased_poster.png">
+</p>
 
-#######################################################################################
-model_null$results
-model_biased$results
+Finally, let's see the different amount of pixels 
+``` r
 
-## Difference? Show in the map (calc. pixel)
-plot(prediction_biased)
-plot(AOA_biased$AOA)
-
-# Uniased Masked 
+## difference? Show in the map (calc. pixel)
+# unbiased masked 
 masked_raster_null <- mask(prediction_null, AOA_null$AOA, maskvalues=0, updatevalue=NA)
 
-# Biased Masked
+# biased masked
 masked_raster_biased <- mask(prediction_biased, AOA_biased$AOA, maskvalues=0, updatevalue=NA)
 
-par(mfrow=c(1,3))
-plot(masked_raster_null)
-plot(masked_raster_biased)
-
-dev.off()
-
-# Pixels in Null Model only
+# pixels in null model only
 diff_null_only <- ifel(!is.na(masked_raster_null) & is.na(masked_raster_biased), 1, NA)
 
-# Pixels in Biased Model only
+# pixels in biased model only
 diff_biased_only <- ifel(is.na(masked_raster_null) & !is.na(masked_raster_biased), -1, NA)
 
-# Merge
+# merge
 diff_raster <- merge(diff_null_only, diff_biased_only)
 
-# Palette
+# palette
 col_palette <- c("deeppink", "darkgreen")
 
 # Plot
@@ -761,20 +734,11 @@ par(mar = c(5, 4, 4, 4) + 0.1, xpd = TRUE)
 legend("topleft", legend = c("Bias - Null", "Null - Bias"), fill = col_palette, cex = 0.8, bty = "n")
 par(mfrow = c(1, 1))
 dev.off()
-
-
-#### Spatial difference ####
-pixel_values <- values(diff_raster)
-
-# Num. red and blue pixels
-num_red_pixels <- sum(pixel_values == -1, na.rm = TRUE)
-num_blue_pixels <- sum(pixel_values == 1, na.rm = TRUE)
-
-# Print
-cat("N. red pixels:", num_red_pixels)
-cat("Area red pixels (km^2):", area_red_km2)
-cat("N. blu pixels", num_blue_pixels)
-cat("Area blu pixels (km^2):", area_blue_km2)
 ```
+
+<p align="center">
+  <img width="600" height="400" src="https://github.com/b-cubed-eu/virtual-suitability-cube/blob/main/images/difference.png">
+</p>
+
 # References
  * Gilardi A, Lovelace R (2024). osmextract: Download and Import Open Street Map Data Extracts. R package version 0.5.1.900, [https://github.com/ropensci/osmextract](https://docs.ropensci.org/osmextract/).
