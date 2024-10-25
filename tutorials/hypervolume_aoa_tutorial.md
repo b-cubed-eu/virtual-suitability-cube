@@ -558,7 +558,7 @@ ggplot() +
 ```
 
 <p align="center">
-  <img width="450" height="350" src="https://github.com/rociobeatrizc/virtual-suitability-cube/blob/main/images/2_hyperv_poster.png">
+  <img width="500" height="350" src="https://github.com/rociobeatrizc/virtual-suitability-cube/blob/main/images/2_hyperv_poster.png">
 </p>
 
 # Area of Applicability
