@@ -3,7 +3,7 @@
 ## Description
 Scripts to build suitability data cubes and assess the impact of sampling bias when measuring ecological niche
 Milestone MS20: Code development for predictive habitat suitability modelling 
-* Virtual Suitability Cube building: [code] (https://github.com/b-cubed-eu/virtual-suitability-cube/blob/main/virtual_suitability_cube.R) and [tutorial](https://github.com/b-cubed-eu/virtual-suitability-cube/blob/main/README.md)
+* Virtual Suitability Cube building: [code](https://github.com/b-cubed-eu/virtual-suitability-cube/blob/main/virtual_suitability_cube.R) and [tutorial](https://github.com/b-cubed-eu/virtual-suitability-cube/blob/main/README.md)
 * Sampling bias measured on the ecological niche completeness: [code](https://github.com/b-cubed-eu/virtual-suitability-cube/blob/main/hypervolume_aoa.R) and [tutorial](https://github.com/b-cubed-eu/virtual-suitability-cube/blob/main/tutorials/hypervolume_aoa_tutorial.md)
 
 ### Authors
