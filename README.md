@@ -1,7 +1,11 @@
 # B-Cubed/Suitability Cube
 
-Milestone 4
+## Description
+Scripts to build suitability data cubes and assess the impact of sampling bias when measuring ecological niche
+Milestone MS20: Code development for predictive habitat suitability modelling 
 
+### Authors
+Rocìo Beatriz Cortès Lobos, Matilde Martini, Michele Di Musciano, Duccio Rocchini
 
 
 # Virtual Suitability Cube
