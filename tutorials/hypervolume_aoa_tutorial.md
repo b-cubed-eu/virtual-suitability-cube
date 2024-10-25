@@ -622,7 +622,7 @@ plot(AOA_null$AOA, col = c("grey","transparent"), add = T, plg = list(x = "tople
 ```
 
 <p align="center">
-  <img width="500" height="400" src="https://github.com/b-cubed-eu/virtual-suitability-cube/blob/main/images/aoa_unbiased_poster.png">
+  <img width="400" height="450" src="https://github.com/b-cubed-eu/virtual-suitability-cube/blob/main/images/aoa_unbiased_poster.png">
 </p>
 
 Thanks to the AOA, we can see the extent of the area where Random Forest is capable of making predictions
@@ -669,7 +669,7 @@ plot(prediction_biased, main = "RF Biased data", col = inferno(500, alpha = 1, b
 ```
 
 <p align="center">
-  <img width="500" height="400" src="https://github.com/b-cubed-eu/virtual-suitability-cube/blob/main/images/rf_null_biased_poster.png">
+  <img width="600" height="400" src="https://github.com/b-cubed-eu/virtual-suitability-cube/blob/main/images/rf_null_biased_poster.png">
 </p>
 
 
@@ -685,7 +685,7 @@ plot(AOA_biased$AOA, col = c("grey","transparent"), add = T, plg = list(x = "top
 ```
 
 <p align="center">
-  <img width="500" height="400" src="https://github.com/b-cubed-eu/virtual-suitability-cube/blob/main/images/aoa_biased_poster.png">
+  <img width="400" height="450" src="https://github.com/b-cubed-eu/virtual-suitability-cube/blob/main/images/aoa_biased_poster.png">
 </p>
 
 If we compare the two outputs, we can immediately see that there is a difference in the extention of the prediction area: 
