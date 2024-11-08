@@ -192,7 +192,9 @@ raster_occurences <- presence.points$sample.points %>% as.data.frame() %>% .[.$R
 # the environmental variables are associated with the occurrences using their coordinates
 values_occ <- mydata %>% rasterToPoints() %>% as.data.frame()
 filtered_occ <- merge(values_occ, raster_occurences, by = c("x", "y"))
-occurrences_values <- filtered_occ[,-c(1:2, 7:8)]
+# useless columns 
+drops <- c("Real","Observed", "x", "y")
+occurrences_values <- filtered_occ[ , !(names(filtered_occ) %in% drops)]
 
 ## Functions for Hypervolume
 
