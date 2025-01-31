@@ -73,7 +73,7 @@ tmax <- worldclim_country("Lux", "tmax", path=tempdir(), res = 0.5, version = "2
 prec <- worldclim_country("Lux", "prec", path=tempdir(), res = 0.5, version = "2.1")
 
 # 12 months of precipitation in Luxembourg. Each layer represents the average value for a month.
-plot(tmin)
+plot(tmin, col = plasma(500, alpha = 1, begin = 0, end = 1, direction = 1))
 ```
 <p align="center">
   <img width="500" height="350" src="https://github.com/rociobeatrizc/virtual_suitability_cube/blob/main/images/lux.png">
