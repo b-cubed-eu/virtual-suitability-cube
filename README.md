@@ -193,7 +193,7 @@ The following function uses the `generateRandomSp` function from the `virtualspe
 Each time the function is executed, a new random species is generated. Therefore, to ensure that we obtain the same species, we need to set a fixed seed using `set.seed()`
 ```r
 generate_suitability <- function(climate_stack, seed_value) {
-  set.seed(seed_value)  # Assicura che la specie virtuale sia riproducibile
+  set.seed(seed_value)
   random_sp <- generateRandomSp(raster.stack = climate_stack,
                                 convert.to.PA = FALSE,
                                 species.type = "multiplicative",
