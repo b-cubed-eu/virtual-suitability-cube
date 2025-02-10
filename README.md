@@ -99,6 +99,9 @@ print(tmin)
 # max values  :         0.0,        -0.1,         2.6,         4.8,         9.0,        12.1, ... 
 # time (raw)  : 1 to 12 
 ```
+<p align="center">
+  <img width="500" height="350" src="https://github.com/b-cubed-eu/virtual-suitability-cube/blob/main/images/vsc_pages-to-jpg-0002.jpg">
+</p>
 
 ## Stars Data Cube
 The [stars R package](https://r-spatial.github.io/stars/) provides an infrastructure for managing **data cubes**. Data cubes are multi-dimensional arrays that enable the organization and analysis of large datasets across multiple dimensions, such as time, space, and various environmental variables.
@@ -134,6 +137,9 @@ During the creation of these random virtual species, the first step involves gen
 
 We will calculate the suitability for each species over the first two months, january and february. 
 
+<p align="center">
+  <img width="500" height="350" src="https://github.com/b-cubed-eu/virtual-suitability-cube/blob/main/images/vsc_pages-to-jpg-0003.jpg">
+</p>
 
 ```r
 # Let's choose to work with the first two months. For both months, we will create a stack containing the 3 climatic variables.
