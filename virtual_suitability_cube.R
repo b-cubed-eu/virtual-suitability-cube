@@ -26,6 +26,8 @@ plot(tmin, col = plasma(500, alpha = 1, begin = 0, end = 1, direction = 1))
 
 # here, we will simply use numbers from 1 to 12 to represent # the months.
 time(tmin) <- time(tmax) <- time(prec) <- 1:12
+tmin
+
 climate_vars <- c("tmin", "tmax", "prec")
 
 # print(tmin)
@@ -37,7 +39,7 @@ stars_clima <- list(tmin, tmax, prec) %>%
   do.call("c", .) %>%
   setNames(climate_vars)
 
-# print(stars_clima)
+print(stars_clima)
 
 ## Virtual Species
 # Let's choose to work with the first two months. For both months, we will create a stack containing the 3 climatic variables.
@@ -66,10 +68,10 @@ raster_stacks <- map(1:num_months, function(month) {
 january <- raster_stacks[[1]]
 february <- raster_stacks[[2]]
 
-# print(january)
+print(january)
 
 generate_suitability <- function(climate_stack, seed_value) {
-  set.seed(seed_value)  # Assicura che la specie virtuale sia riproducibile
+  set.seed(seed_value)
   random_sp <- generateRandomSp(raster.stack = climate_stack,
                                 convert.to.PA = FALSE,
                                 species.type = "multiplicative",
@@ -86,6 +88,8 @@ suit_sp1_jan <- generate_suitability(january, seed_value = 121)
 suit_sp1_feb <- generate_suitability(february, seed_value = 121)
 suit_sp1 <- c(suit_sp1_feb, suit_sp1_jan)  
 
+suit_sp1
+
 # same for species 2
 suit_sp2_jan <- generate_suitability(january, seed_value = 456)
 suit_sp2_feb <- generate_suitability(february, seed_value = 456)
@@ -95,8 +99,8 @@ suit_sp2 <- c(suit_sp2_feb, suit_sp2_jan)
 time(suit_sp2) <- time(suit_sp1) <- 1:2  
 
 # suitability for Species 1
-# plot(suit_sp1, col = viridis(500, alpha = 1, begin = 0, end = 1, direction = 1))
-# title("Suitability of Species 1 in Jan-Feb", outer=TRUE, line=-0.9)
+plot(suit_sp1, col = viridis(500, alpha = 1, begin = 0, end = 1, direction = 1))
+title("Suitability of Species 1 in Jan-Feb", outer=TRUE, line=-0.9)
 
 # suitability for Species 2
 plot(suit_sp2, col = viridis(500, alpha = 1, begin = 0, end = 1, direction = 1))
@@ -155,7 +159,8 @@ cube_sp1sp2 <- c(agg_sp1, agg_sp2) %>%
   
   setNames(.,"suitability")
 
-# print(cube_sp1sp2)
+print(cube_sp1sp2)
+
 # first, we need to identify the corresponding cell for that location.
 which_cell <- st_sf(geometry = st_sfc(st_point(c(5.5, 49.0)), crs = 4326))  %>%  st_join(., lux_grid) 
 print(which_cell$id)
