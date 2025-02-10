@@ -102,6 +102,8 @@ print(tmin)
 <p align="center">
   <img width="600" height="400" src="https://github.com/b-cubed-eu/virtual-suitability-cube/blob/main/images/vsc_pages-to-jpg-0002.jpg">
 </p>
+
+
 ## Stars Data Cube
 The [stars R package](https://r-spatial.github.io/stars/) provides an infrastructure for managing **data cubes**. Data cubes are multi-dimensional arrays that enable the organization and analysis of large datasets across multiple dimensions, such as time, space, and various environmental variables.
 
@@ -139,6 +141,7 @@ We will calculate the suitability for each species over the first two months, ja
 <p align="center">
   <img width="700" height="450" src="https://github.com/b-cubed-eu/virtual-suitability-cube/blob/main/images/vsc_pages-to-jpg-0003.jpg">
 </p>
+
 
 ```r
 # Let's choose to work with the first two months. For both months, we will create a stack containing the 3 climatic variables.
@@ -267,6 +270,7 @@ print(suit_cube_sp2)
 # y       1 180   50.5 -0.008333 WGS 84 [y]
 # time    1   2      1         1     NA   
 ```
+
 ## Virtual Data Cube
 
 We want to incorporate both species into the same object.
