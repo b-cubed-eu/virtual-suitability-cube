@@ -273,7 +273,6 @@ print(suit_cube_sp2)
 ```
 
 ### Virtual Data Cube
-[Link to test header](### Virtual Data Cube)
 
 We want to incorporate both species into the same object.
 
