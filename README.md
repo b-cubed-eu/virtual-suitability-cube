@@ -1,8 +1,9 @@
 # B-Cubed/Suitability Cube
 
 ## Description
-Scripts to build suitability data cubes and assess the impact of sampling bias when measuring ecological niche
-Milestone MS20: Code development for predictive habitat suitability modelling 
+Scripts to build suitability data cubes
+Milestone MS20: Code development for predictive habitat suitability modelling
+Milestone MS25: Code testing for predictive habitat suitability
 * Virtual Suitability Cube building: [code](https://github.com/b-cubed-eu/virtual-suitability-cube/blob/main/virtual_suitability_cube.R) and [tutorial](https://github.com/b-cubed-eu/virtual-suitability-cube/blob/main/README.md)
 * Sampling bias measured on the ecological niche completeness: [code](https://github.com/b-cubed-eu/virtual-suitability-cube/blob/main/hypervolume_aoa.R) and [tutorial](https://github.com/b-cubed-eu/virtual-suitability-cube/blob/main/tutorials/hypervolume_aoa_tutorial.md)
 
@@ -10,7 +11,7 @@ Milestone MS20: Code development for predictive habitat suitability modelling
 Rocìo Beatriz Cortès Lobos (Unibo), Matilde Martini (Unibo), Michele Di Musciano (UnivAQ), Duccio Rocchini (Unibo)
 
 
-# Virtual Suitability Cube
+# Suitability Cube
 Species suitability refers to how favorable an environment is for a species to survive, reproduce, and grow in a specific area and time. It takes into account factors like climate, landscape, and resource availability.
 
 
@@ -20,6 +21,7 @@ Studying species suitability under different environmental conditions is importa
 
 To facilitate the observation of suitability for multiple species over time and space, we developed a framework that uses **Data Cubes**, multidimensional arrays that organize data in a structured way. In this tutorial, we outline the steps to create a **stars** object, which includes three dimensions: time, space (represented as grid cells), and species, with suitability as the main attribute. Stars objects can be sliced, aggregated along one of the dimensions, and analyzed, making them ideal for studying species suitability.
 
+## Virtual Suitability Cube (Code Development)
 For demonstrating the structure of the data cube, we use **virtual species**, which are artificially generated species with known suitability maps based on climate data. The main steps include combining climate data to calculate the suitability of two different species over time and in the same area, then merging these species into a single stars object.
 
 Starting with a time series of climate variables, we combine them to create the suitability for two different virtual species, whose trends over time we want to observe.
@@ -37,7 +39,7 @@ The two data cubes of species suitability are treated as separate entities, whic
 
 This approach makes it easy to visualize and analyze species suitability across time and space for multiple species at once.
 
-## Climatic Data
+### Climatic Data
 
 ``` r
 # load packages
@@ -104,7 +106,7 @@ print(tmin)
 </p>
 
 
-## Stars Data Cube
+### Stars Data Cube
 The [stars R package](https://r-spatial.github.io/stars/) provides an infrastructure for managing **data cubes**. Data cubes are multi-dimensional arrays that enable the organization and analysis of large datasets across multiple dimensions, such as time, space, and various environmental variables.
 
 We will create a stars object that contains the climatic variables as attributes and x and y as dimensions. This way, we have everything we need to proceed into a single object.
@@ -129,7 +131,7 @@ print(stars_clima)
 # time    1  12      1         1     NA    NA  
 ```
 
-## Virtual Species
+### Virtual Species
 The purpose of this brief tutorial is to construct a data structure that allows for the comparison of suitability between two species occupying the same area over time.
 
 As an example, we will consider only two species and two months to observe changes in suitability. The suitability of a real species can be obtained by applying **Species Distribution Models (SDMs)**. But in our case, since we are interested in creating the structure, we will use [virtualspecies](https://borisleroy.com/files/virtualspecies-tutorial.html), which are artificial species randomly generated.
@@ -271,7 +273,7 @@ print(suit_cube_sp2)
 # time    1   2      1         1     NA   
 ```
 
-## Virtual Data Cube
+### Virtual Data Cube
 
 We want to incorporate both species into the same object.
 
@@ -427,6 +429,8 @@ We can imagine the structure of the cube in this way, where the temporal layers 
 <p align="center">
   <img width="450" height="450" src="https://github.com/rociobeatrizc/virtual-suitability-cube/blob/main/images/5sp_cube.jpg">
 </p>
+
+## Suitability Cube (Code testing)
 
 
 ## References
