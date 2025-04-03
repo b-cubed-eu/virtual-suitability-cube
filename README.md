@@ -9,6 +9,12 @@ Scripts to build suitability data cubes
 ### Authors
 Rocìo Beatriz Cortès Lobos (Unibo), Matilde Martini (Unibo), Michele Di Musciano (UnivAQ), Duccio Rocchini (Unibo)
 
+### Next steps (Nov. 2025)
+* Add temporal dimension ⏲️
+* Add an uncertainty measure
+* Add the Dissimilarity Index to measure the distance between training points and predictors
+* Incorporate DeepMaxEnt 
+
 
 # Suitability Cube
 Species suitability refers to how favorable an environment is for a species to survive, reproduce, and grow in a specific area and time. It takes into account factors like climate, landscape, and resource availability.
