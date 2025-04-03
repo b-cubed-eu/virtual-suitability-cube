@@ -3,7 +3,7 @@
 ## Description
 Scripts to build suitability data cubes
 
-* [Milestone MS20: Code development for predictive habitat suitability modelling](#virtual-suitability-cube-(code-development))
+* [Milestone MS20: Code development for predictive habitat suitability modelling](#virtual-suitability-cube-code-development)
 * Milestone MS25: Code testing for predictive habitat suitability
 
 ### Authors
