@@ -4,7 +4,7 @@
 #' using new predictions and the previous models 
 #' 
 #' @param models A list of MaxEnt models, one for each species. T
-#' hey must be the output of create_sdm_for_species_list function
+#' hey must be the output of `create_sdm_for_species_list` function
 #' @param stack_clima A SpatRaster object with environmental variables for the new area
 
 #' @return A stars R object with suitability as attribute and x, y, and species as dimension
