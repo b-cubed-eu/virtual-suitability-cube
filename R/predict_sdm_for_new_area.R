@@ -16,23 +16,23 @@ predict_sdm_for_new_area <- function(models, new_stack) {
   for (species_name in names(models)) {
     message("SDM for: ", species_name)
     
-    # Estrai il modello per la specie
+    # extract model for species 
     mx <- models[[species_name]]
     
-    # Applica il modello al nuovo stack
+    # apply to new stack
     pred_map <- predictEnmSdm(mx, new_stack)
     
-    # Rinomina il layer come "suitability"
+    # rename layer as 'suitability'
     names(pred_map) <- "suitability"
     
-    # Salva la previsione nella lista
+    # save
     predictions[[species_name]] <- pred_map
   }
   
-  # Converte la lista di SpatRaster in un unico SpatRaster
+  # from list to stack
   prediction_stack <- rast(predictions)
   
-  # Converte in oggetto stars con dimensioni corrette
+  # from stack to rast
   stars_predictions <- st_as_stars(prediction_stack) %>% 
     setNames("suit") %>% 
     st_set_dimensions(., names = c("x", "y", "species"))
