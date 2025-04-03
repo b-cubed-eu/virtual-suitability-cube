@@ -431,6 +431,226 @@ We can imagine the structure of the cube in this way, where the temporal layers 
 
 ## Suitability Cube (Code testing)
 
+Code testing with real data from Dutch Vegetation Database
+
+```r
+library(ggplot2)
+library(terra)
+library(sf)
+library(raster)
+library(viridis)
+library(tidyverse)
+library(stars)
+library(geodata)
+library(purrr)
+library(reshape2)
+library(dplyr)
+library(enmSdmX)
+
+## Download climatic data for the Netherlands
+# worldclim_country function
+# The res paramater is the resolution, with valid values as 10,5,2.5 and 0.5 
+# The var parameter is the variable name, with valid values as tmin, tmax, tavg, prec, wind, vapr and bio.
+# The worldclim_country function will return 12 layers of raster (in a SpatRaster), for each variable. 
+tmin <- worldclim_country("Nld", "tmin", path=tempdir(), res = 0.5, version = "2.1")
+tmax <- worldclim_country("Nld", "tmax", path=tempdir(), res = 0.5, version = "2.1")
+prec <- worldclim_country("Nld", "prec", path=tempdir(), res = 0.5, version = "2.1")
+tavg <- worldclim_country("Nld", "tavg", path=tempdir(), res = 0.5, version = "2.1")
+wind <- worldclim_country("Nld", "wind", path=tempdir(), res = 0.5, version = "2.1")
+
+# add time
+time(tmin) <- time(tmax) <- time(prec) <- time(tavg) <- time(wind) <- 1:12
+
+climate_vars <- c("tmin", "tmax", "prec", "tavg", "wind")
+
+# first, we create a list that contains all the stacks, to which we apply st_as_stars.
+stars_clima <- list(tmin, tmax, prec, tavg, wind) %>%
+  lapply(st_as_stars) %>%
+  do.call("c", .) %>%
+  setNames(climate_vars)
+
+stars_clima
+
+# stars object with 3 dimensions and 5 attributes
+# attribute(s), summary of first 1e+05 cells:
+#  Min. 1st Qu. Median         Mean 3rd Qu. Max.  NA's
+# tmin  -0.8    -0.4   -0.1  0.007868939     0.2  2.6 63985
+# tmax   3.7     4.3    4.6  4.718736640     5.0  6.4 63985
+# prec  58.0    66.0   68.0 67.980036096    70.0 80.0 63985
+# tavg   1.6     1.9    2.2  2.363004291     2.6  4.5 63985
+# wind   4.0     4.6    5.2  5.363057057     6.0  7.8 63985
+#
+# dimension(s):
+#     from  to offset     delta refsys point x/y
+# x       1 540      3  0.008333 WGS 84 FALSE [x]
+# y       1 420     54 -0.008333 WGS 84 FALSE [y]
+# time    1  12      1         1     NA    NA    
+
+# training month
+clima_may <- stars_clima %>% slice("time", 5) 
+
+# predictors
+clima_train <- rast(clima_may) %>% 
+  setNames(climate_vars)
+
+plot(clima_train)
+```
+
+### Occurrences
+
+
+Occurrences of 5 species, collected from 2000 to 2017
+* Galium verum L.
+* Ophrys apifera Huds.
+* Paris quadrifolia L.
+* Chrysosplenium alternifolium L.
+* Anemone nemorosa L.
+
+They will be use for training MaxEnt model
+``` r
+## occurrences
+# GBIF.org (18 March 2025) GBIF Occurrence Download  https://doi.org/10.15468/dl.hynkda
+# upload the dataset
+# read txt
+occ <- read.delim("occurrence.txt", sep = "\t", header = TRUE, quote = "", stringsAsFactors = FALSE) %>%
+  select(scientificName, decimalLatitude, decimalLongitude, year)
+
+## plot
+# Filter years from 2000 to 2017
+occ_counts <- occ %>%
+  filter(year >= 2000 & year <= 2017) %>%
+  group_by(scientificName, year) %>%
+  summarise(count = n(), .groups = "drop")
+
+# Heatmap
+ggplot(occ_counts, aes(x = year, y = scientificName, fill = count)) +
+  geom_tile() +
+  scale_fill_gradientn(colors = mako(10, direction = -1), 
+                       breaks = seq(0, max(occ_counts$count, na.rm = TRUE), by = 150), 
+                       labels = seq(0, max(occ_counts$count, na.rm = TRUE), by = 150)) +
+  labs(title = "occurrences per species per year",
+       x = "year",
+       y = "species",
+       fill = "occurrences") +
+  theme_minimal(base_size = 12) +
+  theme(plot.title = element_text(hjust = 0.5),
+        legend.position = "right",
+        axis.text.x = element_text(angle = 45, hjust = 1)) +
+  coord_fixed(ratio = 1.5)
+
+# filter year
+occ <- occ %>% 
+  filter(year >= 2000 & year <= 2017) %>%
+  filter(!is.na(decimalLatitude) & !is.na(decimalLongitude))
+
+head(occ)
+# scientificName decimalLatitude decimalLongitude year
+# 1     Galium verum L.        51.82729          3.95035 2017
+# 2     Galium verum L.        52.87226          4.71202 2017
+# 3     Galium verum L.        50.84668          5.77765 2015
+# 4     Galium verum L.        52.53752          6.47736 2016
+# 5 Anemone nemorosa L.        52.01382          6.07912 2013
+# 6 Anemone nemorosa L.        50.88266          5.82037 2014
+
+# split dataset by species
+species <- split_species_data(occ)
+str(species)
+
+
+
+# creating SDMs with MaxEnt for many species in the same area, with the same predictors
+sdms <- create_sdm_for_species_list(species, clima_train, background_points = 10000, predictors = names(clima_train))
+plot(sdms$predictions$`Anemone nemorosa L.`)
+```
+### New area; Belgium
+Based on the models previously trained, let's check the suitability of our species in a different area, i.e. Belgium.
+
+```r
+# predictions for the same species but in another area (Belgium)
+# same climatic variables
+tmin_b <- worldclim_country("Bel", "tmin", path=tempdir(), res = 0.5, version = "2.1")
+tmax_b <- worldclim_country("Bel", "tmax", path=tempdir(), res = 0.5, version = "2.1")
+prec_b <- worldclim_country("Bel", "prec", path=tempdir(), res = 0.5, version = "2.1")
+tavg_b <- worldclim_country("Bel", "tavg", path=tempdir(), res = 0.5, version = "2.1")
+wind_b <- worldclim_country("Bel", "wind", path=tempdir(), res = 0.5, version = "2.1")
+
+# time
+time(tmin_b) <- time(tmax_b) <- time(prec_b) <- time(tavg_b) <- time(wind_b) <- 1:12
+
+# stars object of Belgium
+stars_clima_bel <- list(tmin_b, tmax_b, prec_b, tavg_b, wind_b) %>%
+  lapply(st_as_stars) %>%
+  do.call("c", .) %>%
+  setNames(climate_vars)
+
+# may for Belgium (we want to see suitability predictions for the same month)
+clima_may_bel <- stars_clima_bel %>% slice("time", 5) 
+
+
+# predictors in may
+clima_train_bel_may <- rast(clima_may_bel) %>% 
+  setNames(climate_vars)
+
+# predicting suitability in a new area for the same species using the models trained previously 
+new_predictions_may <- predict_sdm_for_new_area(sdms$models, clima_train_bel_may)
+
+## aggregation steps
+
+# bounding box
+bbox <- st_bbox(tmin_b)
+sf_bel <- st_as_sfc(bbox) %>% 
+  st_sf()
+
+# grid
+bel_grid <- st_make_grid(sf_bel, cellsize = .1, n = c(50, 50), what = "polygons", square = FALSE, offset = st_bbox(sf_bel)[c("xmin", "ymin")]) %>% 
+  st_as_sf() %>% 
+  mutate(id = 1:nrow(.))
+
+
+# plot raster with grid
+# convert SpatRaster to dataframe
+tmin_df <- as.data.frame(tmin_b$BEL_wc2.1_30s_tmin_1, xy = TRUE, na.rm = TRUE)
+tmin_df
+p <- ggplot() +
+  geom_raster(data = tmin_df, aes(x = x, y = y, fill = BEL_wc2.1_30s_tmin_1)) +
+  scale_fill_viridis_c(alpha = 1, begin = 0, end = 1, option = "viridis") +
+  geom_sf(data = bel_grid, color = "black", size = 0.5, fill = NA, alpha = 0.2) +
+  theme_void() +
+  theme(
+    legend.position = "none",
+    panel.border = element_blank(),
+    plot.margin = margin(0, 0, 0, 0)
+  )
+plot(p)
+
+
+# aggregating suitability values of the species over polygons for a given area
+stars_predictions_aggregated <- aggregate_suitability(stars_predictions_bel, bel_grid)
+
+print(stars_predictions_aggregated)
+
+# first, we need to identify the corresponding cell for that location.
+which_cell <- st_sf(geometry = st_sfc(st_point(c(4.3517, 50.8503)), crs = 4326))  %>%  st_join(., bel_grid) 
+print(which_cell$id)
+# [1] 695
+
+pull(stars_predictions_aggregated[,695,], "suitability")
+
+
+## we can better visualize this information this way:
+values_suit <- pull(stars_predictions_aggregated[,876,], "suitability")
+# transform values_suit into a long format without rewriting it
+df_long <- melt(values_suit)
+colnames(df_long) <- c("cell", "species", "suitability")
+
+df_long$species <- factor(df_long$species, labels = names(species))
+df_long
+# plot
+c <- ggplot(df_long, aes(x = species, y = suitability, color = species)) +
+  geom_point(size = 3)
+plot(c) 
+```
+
 
 ## References
 * virtualspecies, an R package to generate virtual species distributions (2018), Leroy B. et al., [DOI](https://doi.org/10.1111/ecog.01388)
