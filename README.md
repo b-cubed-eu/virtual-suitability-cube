@@ -3,7 +3,7 @@
 ## Description
 Scripts to build suitability data cubes
 
-* Milestone MS20: Code development for predictive habitat suitability modelling
+* [Milestone MS20: Code development for predictive habitat suitability modelling](#virtual-suitability-cube-(code-development))
 * Milestone MS25: Code testing for predictive habitat suitability
 
 ### Authors
@@ -21,7 +21,6 @@ Studying species suitability under different environmental conditions is importa
 To facilitate the observation of suitability for multiple species over time and space, we developed a framework that uses **Data Cubes**, multidimensional arrays that organize data in a structured way. In this tutorial, we outline the steps to create a **stars** object, which includes three dimensions: time, space (represented as grid cells), and species, with suitability as the main attribute. Stars objects can be sliced, aggregated along one of the dimensions, and analyzed, making them ideal for studying species suitability.
 
 ## Virtual Suitability Cube (Code Development)
-[link agli autori](#authors)
 
 For demonstrating the structure of the data cube, we use **virtual species**, which are artificially generated species with known suitability maps based on climate data. The main steps include combining climate data to calculate the suitability of two different species over time and in the same area, then merging these species into a single stars object.
 
