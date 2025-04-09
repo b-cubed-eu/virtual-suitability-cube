@@ -438,9 +438,19 @@ We can imagine the structure of the cube in this way, where the temporal layers 
 
 ## Suitability Cube (Code testing)
 
-Code testing with real data from Dutch Vegetation Database
+Code testing with real data from Dutch Vegetation Database. 
+The purpose here is to test the stars data cube structure for multiple real species. The goal is to predict the suitability of those species in a different area from the training one. 
+
+Steps are: 
+* Collecting climatic data of The Netherlands (one month) and creating a stars data cube with them
+* Collecting only-presence data for 5 species in Netherlands from 2000 to 2017 and splitting them by species name
+* Using the environmental information and the occurrences, training a MaxEnt model for each species
+* Collecting climatic data of Belgium (one month) and creating a stars data cube with them
+* Predicting the suitability of the 5 species in the new area using models trained before
+* Aggregating the suitability maps over polygons to synthetize all the informations into a single data cube
 
 ```r
+# imports
 library(ggplot2)
 library(terra)
 library(sf)
@@ -453,7 +463,12 @@ library(purrr)
 library(reshape2)
 library(dplyr)
 library(enmSdmX)
+```
+### Climatic data for the training area (The Netherlands)
 
+Data collection and aggregation
+
+``` r
 ## Download climatic data for the Netherlands
 # worldclim_country function
 # The res paramater is the resolution, with valid values as 10,5,2.5 and 0.5 
@@ -476,7 +491,7 @@ stars_clima <- list(tmin, tmax, prec, tavg, wind) %>%
   do.call("c", .) %>%
   setNames(climate_vars)
 
-stars_clima
+print(stars_clima)
 
 # stars object with 3 dimensions and 5 attributes
 # attribute(s), summary of first 1e+05 cells:
@@ -505,7 +520,7 @@ plot(clima_train)
 
 ### Occurrences
 
-
+From Dutch Vegetation Database:[GBIF Occurrence Download](https://doi.org/10.15468/dl.hynkda)
 Occurrences of 5 species, collected from 2000 to 2017
 * Galium verum L.
 * Ophrys apifera Huds.
@@ -516,7 +531,7 @@ Occurrences of 5 species, collected from 2000 to 2017
 They will be use for training MaxEnt model
 ``` r
 ## occurrences
-# GBIF.org (18 March 2025) GBIF Occurrence Download  https://doi.org/10.15468/dl.hynkda
+
 # upload the dataset
 # read txt
 occ <- read.delim("occurrence.txt", sep = "\t", header = TRUE, quote = "", stringsAsFactors = FALSE) %>%
@@ -561,15 +576,16 @@ head(occ)
 
 # split dataset by species
 species <- split_species_data(occ)
-str(species)
-
-
-
+```
+### MaxEnt model for each species
+The function takes predictors and occurrences to build a MaxEnt model for each species. 
+Models are then saved and can be used for predicting in a new area.
+``` r
 # creating SDMs with MaxEnt for many species in the same area, with the same predictors
 sdms <- create_sdm_for_species_list(species, clima_train, background_points = 10000, predictors = names(clima_train))
 plot(sdms$predictions$`Anemone nemorosa L.`)
 ```
-### New area; Belgium
+### New area: Belgium
 Based on the models previously trained, let's check the suitability of our species in a different area, i.e. Belgium.
 
 ```r
@@ -593,7 +609,6 @@ stars_clima_bel <- list(tmin_b, tmax_b, prec_b, tavg_b, wind_b) %>%
 # may for Belgium (we want to see suitability predictions for the same month)
 clima_may_bel <- stars_clima_bel %>% slice("time", 5) 
 
-
 # predictors in may
 clima_train_bel_may <- rast(clima_may_bel) %>% 
   setNames(climate_vars)
@@ -602,7 +617,6 @@ clima_train_bel_may <- rast(clima_may_bel) %>%
 new_predictions_may <- predict_sdm_for_new_area(sdms$models, clima_train_bel_may)
 
 ## aggregation steps
-
 # bounding box
 bbox <- st_bbox(tmin_b)
 sf_bel <- st_as_sfc(bbox) %>% 
