@@ -520,7 +520,7 @@ plot(clima_train)
 
 ### Occurrences
 
-From Dutch Vegetation Database:[GBIF Occurrence Download](https://doi.org/10.15468/dl.hynkda)
+From Dutch Vegetation Database: [GBIF Occurrence Download](https://doi.org/10.15468/dl.hynkda)
 Occurrences of 5 species, collected from 2000 to 2017
 * Galium verum L.
 * Ophrys apifera Huds.
