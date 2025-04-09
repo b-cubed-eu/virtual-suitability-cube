@@ -11,7 +11,7 @@ Rocìo Beatriz Cortès Lobos (Unibo), Matilde Martini (Unibo), Michele Di Muscia
 
 ### Next steps (Nov. 2025)
 * Add temporal dimension ⏲️
-* Add an uncertainty measure (```dubicube ``` R package)
+* Add an uncertainty measure (```dubicube``` R package)
 * Add the Dissimilarity Index to measure the distance between training points and predictors
 * Incorporate DeepMaxEnt
 
