@@ -523,7 +523,6 @@ plot(clima_train)
 </p>
 
 
-
 ### Occurrences
 
 From Dutch Vegetation Database: [GBIF Occurrence Download](https://doi.org/10.15468/dl.hynkda)
@@ -568,7 +567,7 @@ ggplot(occ_counts, aes(x = year, y = scientificName, fill = count)) +
 ```
 
 <p align="center">
-  <img width="800" height="500" src="https://github.com/b-cubed-eu/virtual-suitability-cube/blob/main/images/heatmap_page-0001.jpg">
+  <img width="800" height="550" src="https://github.com/b-cubed-eu/virtual-suitability-cube/blob/main/images/heatmap_page-0001.jpg">
 </p>
 
 ``` r
