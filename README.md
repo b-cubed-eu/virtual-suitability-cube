@@ -646,7 +646,7 @@ plot(p)
 
 
 # aggregating suitability values of the species over polygons for a given area
-stars_predictions_aggregated <- aggregate_suitability(stars_predictions_bel, bel_grid)
+stars_predictions_aggregated <- aggregate_suitability(new_predictions_may, bel_grid)
 
 print(stars_predictions_aggregated)
 
