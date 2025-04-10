@@ -568,7 +568,7 @@ ggplot(occ_counts, aes(x = year, y = scientificName, fill = count)) +
 ```
 
 <p align="center">
-  <img width="800" height="450" src="https://github.com/b-cubed-eu/virtual-suitability-cube/blob/main/images/heatmap_page-0001.jpg">
+  <img width="800" height="500" src="https://github.com/b-cubed-eu/virtual-suitability-cube/blob/main/images/heatmap_page-0001.jpg">
 </p>
 
 ``` r
@@ -691,7 +691,7 @@ plot(p)
 ```
 
 <p align="center">
-  <img width="400" height="450" src="https://github.com/b-cubed-eu/virtual-suitability-cube/blob/main/images/grid_bel.png">
+  <img width="430" height="350" src="https://github.com/b-cubed-eu/virtual-suitability-cube/blob/main/images/grid_bel.png">
 </p>
 
 
