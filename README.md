@@ -439,7 +439,7 @@ We can imagine the structure of the cube in this way, where the temporal layers 
 ## Suitability Cube (Code testing)
 
 Code testing with real data from Dutch Vegetation Database. 
-The purpose here is to test the stars data cube structure for multiple real species. The goal is to predict the suitability of those species in a different area from the training one. 
+Here, we want to test the stars data cube structure for multiple real species. The goal is to predict the suitability of those species in a different area from the training one. 
 
 Steps are: 
 * Collecting climatic data of The Netherlands (one month) and creating a stars data cube with them
@@ -597,8 +597,9 @@ names(species)
 # [4] "Ophrys apifera Huds."            "Paris quadrifolia L."  
 ```
 ### MaxEnt model for each species
-The function takes predictors and occurrences to build a MaxEnt model for each species. 
+The function takes predictors and occurrences to build a MaxEnt model (enmSdmX R package) for each species.
 Models are then saved and can be used for predicting in a new area. The output contains also prediction maps. 
+
 ``` r
 # creating SDMs with MaxEnt for many species in the same area, with the same predictors
 sdms <- create_sdm_for_species_list(species, clima_train, background_points = 10000, predictors = names(clima_train))
