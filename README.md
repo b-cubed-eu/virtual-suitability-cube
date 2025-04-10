@@ -466,7 +466,7 @@ library(enmSdmX)
 ```
 ### Climatic data for the training area (The Netherlands)
 
-Data collection and aggregation
+Data collection and aggregation in a data cube that contains the climatic variables as attributes and x, y and time. 
 
 ``` r
 ## Download climatic data for the Netherlands
@@ -518,6 +518,12 @@ clima_train <- rast(clima_may) %>%
 plot(clima_train)
 ```
 
+<p align="center">
+  <img width="550" height="450" src="https://github.com/b-cubed-eu/virtual-suitability-cube/blob/main/images/netherlands_clima.png">
+</p>
+
+
+
 ### Occurrences
 
 From Dutch Vegetation Database: [GBIF Occurrence Download](https://doi.org/10.15468/dl.hynkda)
@@ -544,7 +550,7 @@ occ_counts <- occ %>%
   group_by(scientificName, year) %>%
   summarise(count = n(), .groups = "drop")
 
-# Heatmap
+# Heatmap to see the occurrences of each species per year
 ggplot(occ_counts, aes(x = year, y = scientificName, fill = count)) +
   geom_tile() +
   scale_fill_gradientn(colors = mako(10, direction = -1), 
@@ -559,7 +565,13 @@ ggplot(occ_counts, aes(x = year, y = scientificName, fill = count)) +
         legend.position = "right",
         axis.text.x = element_text(angle = 45, hjust = 1)) +
   coord_fixed(ratio = 1.5)
+```
 
+<p align="center">
+  <img width="800" height="450" src="https://github.com/b-cubed-eu/virtual-suitability-cube/blob/main/images/heatmap_page-0001.jpg">
+</p>
+
+``` r
 # filter year
 occ <- occ %>% 
   filter(year >= 2000 & year <= 2017) %>%
@@ -574,17 +586,32 @@ head(occ)
 # 5 Anemone nemorosa L.        52.01382          6.07912 2013
 # 6 Anemone nemorosa L.        50.88266          5.82037 2014
 
-# split dataset by species
+# split dataset by species with the function split_species_data
 species <- split_species_data(occ)
+
+typeof(species)
+# [1] "list"
+
+names(species)
+# [1] "Anemone nemorosa L."             "Chrysosplenium alternifolium L." "Galium verum L."                
+# [4] "Ophrys apifera Huds."            "Paris quadrifolia L."  
 ```
 ### MaxEnt model for each species
 The function takes predictors and occurrences to build a MaxEnt model for each species. 
-Models are then saved and can be used for predicting in a new area.
+Models are then saved and can be used for predicting in a new area. The output contains also prediction maps. 
 ``` r
 # creating SDMs with MaxEnt for many species in the same area, with the same predictors
 sdms <- create_sdm_for_species_list(species, clima_train, background_points = 10000, predictors = names(clima_train))
+
+# plot suitability map for Anemone nemorosa L. in The Netherlands
 plot(sdms$predictions$`Anemone nemorosa L.`)
 ```
+
+<p align="center">
+  <img width="500" height="450" src="https://github.com/b-cubed-eu/virtual-suitability-cube/blob/main/images/anemone.png">
+</p>
+
+
 ### New area: Belgium
 Based on the models previously trained, let's check the suitability of our species in a different area, i.e. Belgium.
 
@@ -616,6 +643,25 @@ clima_train_bel_may <- rast(clima_may_bel) %>%
 # predicting suitability in a new area for the same species using the models trained previously 
 new_predictions_may <- predict_sdm_for_new_area(sdms$models, clima_train_bel_may)
 
+# the output is a data cube with suitability as attribute
+print(new_predictions_may)
+
+# stars object with 3 dimensions and 1 attribute
+# attribute(s):
+#              Min.    1st Qu.    Median      Mean   3rd Qu.      Max.  NA's
+# suit  5.867529e-13 0.03843691 0.1433858 0.2354462 0.3725311 0.9999935 67380
+# dimension(s):
+#        from  to offset     delta refsys                                       values x/y
+# x          1 480    2.5  0.008333 WGS 84                                         NULL [x]
+# y          1 360     52 -0.008333 WGS 84                                         NULL [y]
+# species    1   5     NA        NA     NA Anemone nemorosa L.,...,Paris quadrifolia L. 
+
+```
+### Aggregation
+The last step is the polygon-based aggregation. 
+In line with the structure proposed by the B-Cubed framework, we aim to summarize species suitability information within a grid covering the study area.
+
+```r
 ## aggregation steps
 # bounding box
 bbox <- st_bbox(tmin_b)
@@ -626,7 +672,6 @@ sf_bel <- st_as_sfc(bbox) %>%
 bel_grid <- st_make_grid(sf_bel, cellsize = .1, n = c(50, 50), what = "polygons", square = FALSE, offset = st_bbox(sf_bel)[c("xmin", "ymin")]) %>% 
   st_as_sf() %>% 
   mutate(id = 1:nrow(.))
-
 
 # plot raster with grid
 # convert SpatRaster to dataframe
@@ -643,33 +688,39 @@ p <- ggplot() +
     plot.margin = margin(0, 0, 0, 0)
   )
 plot(p)
+```
+
+<p align="center">
+  <img width="400" height="450" src="https://github.com/b-cubed-eu/virtual-suitability-cube/blob/main/images/grid_bel.png">
+</p>
 
 
+```r
 # aggregating suitability values of the species over polygons for a given area
 stars_predictions_aggregated <- aggregate_suitability(new_predictions_may, bel_grid)
 
+# output: data cube
 print(stars_predictions_aggregated)
+
+# stars object with 2 dimensions and 1 attribute
+# attribute(s):
+#                     Min.    1st Qu.    Median     Mean  3rd Qu.      Max. NA's
+# suitability  1.540887e-07 0.05111451 0.1581302 0.234773 0.370952 0.9726111  930
+# dimension(s):
+#        from   to refsys point                                                        values
+# x          1 1494 WGS 84 FALSE POLYGON ((2.45 49.02887, ...,...,POLYGON ((6.55 51.97335, ...
+# species    1    5     NA    NA                  Anemone nemorosa L.,...,Paris quadrifolia L
+
 
 # first, we need to identify the corresponding cell for that location.
 which_cell <- st_sf(geometry = st_sfc(st_point(c(4.3517, 50.8503)), crs = 4326))  %>%  st_join(., bel_grid) 
 print(which_cell$id)
 # [1] 695
 
+# extract suitability values
 pull(stars_predictions_aggregated[,695,], "suitability")
-
-
-## we can better visualize this information this way:
-values_suit <- pull(stars_predictions_aggregated[,876,], "suitability")
-# transform values_suit into a long format without rewriting it
-df_long <- melt(values_suit)
-colnames(df_long) <- c("cell", "species", "suitability")
-
-df_long$species <- factor(df_long$species, labels = names(species))
-df_long
-# plot
-c <- ggplot(df_long, aes(x = species, y = suitability, color = species)) +
-  geom_point(size = 3)
-plot(c) 
+#           [,1]       [,2]       [,3]      [,4]       [,5]
+# [1,] 0.00129283 0.03917683 0.02307574 0.3141483 0.07493015
 ```
 
 
