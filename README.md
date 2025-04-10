@@ -726,12 +726,15 @@ pull(stars_predictions_aggregated[,695,], "suitability")
 
 ## References
 * virtualspecies, an R package to generate virtual species distributions (2018), Leroy B. et al., [DOI](https://doi.org/10.1111/ecog.01388)
-* Pebesma E, Bivand R (2023). Spatial Data Science: With applications in R. Chapman and Hall/CRC, London. DOI:10.1201/9780429459016, [https://r-spatial.org/book/](https://r-spatial.org/book/)
 * Meyer H, Milà C, Ludwig M, Linnenbrink J, Schumacher F (2024). CAST: 'caret' Applications for Spatial-Temporal Models. R package version 1.0.2, [https://hannameyer.github.io/CAST/](https://github.com/HannaMeyer/CAST)
 * Gilardi A, Lovelace R (2024). osmextract: Download and Import Open Street Map Data Extracts. R package version 0.5.1.900, [https://github.com/ropensci/osmextract](https://docs.ropensci.org/osmextract/).
-* Predicting species distribution: offering more than simple habitat models, Guisan A., Thuiller W., 2005, [DOI](https://doi.org/10.1111/j.1461-0248.2005.00792.x)
 * A practical overview of transferability in species distribution modeling, Werkowska W., Marquez A., Real R., Acevedo P., 2017,  [DOI](https://cdnsciencepub.com/doi/abs/10.1139/er-2016-0045)
 * Effect of roadside bias on the accuracy of predictive maps produced by bioclimatic models, Kadmon R., Farber O., Danin A., 2004, [DOI](https://esajournals.onlinelibrary.wiley.com/doi/full/10.1890/02-5364)
 * The virtual ecologist approach: simulating data and observers, Zurell et al., 2010, [DOI](https://nsojournals.onlinelibrary.wiley.com/doi/full/10.1111/j.1600-0706.2009.18284.x)
 * The n-dimensional hypervolume, Blonder et al., 2014, [DOI](https://onlinelibrary.wiley.com/doi/full/10.1111/geb.12146)
 * The cumulative niche approach: a framework to assess the performance of ecological niche model projections, Arlè et al., 2024, [DOI](https://onlinelibrary.wiley.com/doi/full/10.1002/ece3.11060)
+*  Smith, A.B., Murphy, S.J., Henderson, D., and Erickson, K.D. 2023. Including imprecisely georeferenced specimens improves accuracy of species distribution models and estimates of niche breadth. Global Ecology and Biogeography In press
+* Pebesma E, Bivand R (2023). Spatial Data Science: With applications in R. Chapman and Hall/CRC, London. doi:10.1201/9780429459016, https://r-spatial.org/book/.
+*	Meyer, Hanna, and Edzer Pebesma. "Predicting into unknown space? Estimating the area of applicability of spatial prediction models." Methods in Ecology and Evolution 12.9 (2021): 1620-1633.
+*	Steven J. Phillips, Robert P. Anderson, Robert E. Schapire, Maximum entropy modeling of species geographic distributions, Ecological Modelling, Volume 190, Issues 3–4, 2006, Pages 231-259, ISSN 0304-3800, https://doi.org/10.1016/j.ecolmodel.2005.03.026.
+*	Guisan, Antoine, and Wilfried Thuiller. "Predicting species distribution: offering more than simple habitat models." Ecology letters 8.9 (2005): 993-1009.
