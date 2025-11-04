@@ -15,41 +15,41 @@
 #' @return an object with $models and $predictions for each species 
 
 
-create_sdm_for_species_list <- function(species, stack_clima, background_points = 10000, predictors = NULL) {
+create_sdm_for_species_list = function(species, stack_clima, background_points = 10000, predictors = NULL) {
   
   # empty list
-  models <- list()
-  predictions <- list()
+  models = list()
+  predictions = list()
   
   # loop for each species
   for (species_name in names(species)) {
     message("Processing species: ", species_name)
     
-    species_data <- species[[species_name]]
+    species_data = species[[species_name]]
     
     # NA remove
-    species_data <- species_data[!is.na(species_data$decimalLatitude) & !is.na(species_data$decimalLongitude), ]
+    species_data = species_data[!is.na(species_data$decimalLatitude) & !is.na(species_data$decimalLongitude), ]
     
     # SpatVector object with coordinates
-    species_spat <- vect(species_data, geom = c("decimalLongitude", "decimalLatitude"), crs = "EPSG:4326")
+    species_spat = vect(species_data, geom = c("decimalLongitude", "decimalLatitude"), crs = "EPSG:4326")
     
     # clean points outside cells
-    species_spat <- species_spat[!is.na(terra::cellFromXY(stack_clima, terra::crds(species_spat))), ]
+    species_spat = species_spat[!is.na(terra::cellFromXY(stack_clima, terra::crds(species_spat))), ]
     
     # delete duplicates
-    species_spat <- elimCellDuplicates(species_spat, stack_clima)
+    species_spat = elimCellDuplicates(species_spat, stack_clima)
     
     # values extraction
-    occEnv <- terra::extract(stack_clima, species_spat, ID = FALSE)
-    occEnv <- occEnv[complete.cases(occEnv), ]
+    occEnv = terra::extract(stack_clima, species_spat, ID = FALSE)
+    occEnv = occEnv[complete.cases(occEnv), ]
     
     # background points
-    bgEnv <- terra::spatSample(stack_clima, background_points)
-    bgEnv <- bgEnv[complete.cases(bgEnv), ]
-    bgEnv <- bgEnv[1:min(background_points, nrow(bgEnv)), ]
+    bgEnv = terra::spatSample(stack_clima, background_points)
+    bgEnv = bgEnv[complete.cases(bgEnv), ]
+    bgEnv = bgEnv[1:min(background_points, nrow(bgEnv)), ]
     
     # presence-background in the same df
-    presBg <- data.frame(
+    presBg = data.frame(
       presBg = c(
         rep(1, nrow(occEnv)),
         rep(0, nrow(bgEnv))
@@ -57,15 +57,15 @@ create_sdm_for_species_list <- function(species, stack_clima, background_points 
     )
     
     # combine
-    env <- rbind(occEnv, bgEnv)
-    env <- cbind(presBg, env)
+    env = rbind(occEnv, bgEnv)
+    env = cbind(presBg, env)
     
     if (is.null(predictors)) {
-      predictors <- names(stack_clima)
+      predictors = names(stack_clima)
     }
     
     #  MaxEnt model from enmSdmX
-    mx <- trainMaxEnt(
+    mx = trainMaxEnt(
       data = env,
       resp = 'presBg',
       predictors = predictors,
@@ -73,13 +73,13 @@ create_sdm_for_species_list <- function(species, stack_clima, background_points 
     )
     
     # save in list 'models'
-    models[[species_name]] <- mx
+    models[[species_name]] = mx
     
     # prediction for the species with enmSdmX
-    mxMap <- predictEnmSdm(mx, stack_clima)
+    mxMap = predictEnmSdm(mx, stack_clima)
     
     # save map prediction in 'predictions'
-    predictions[[species_name]] <- mxMap
+    predictions[[species_name]] = mxMap
     
     message("done for: ", species_name)  # Messaggio intermedio al termine della specie
   }
