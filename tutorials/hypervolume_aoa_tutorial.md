@@ -45,17 +45,17 @@ Let's load the vector files: the study area and the road network from Open Stree
 
 ``` r
 # upload shapefile
-aoi <- st_read("aoi.shp")
+aoi = st_read("aoi.shp")
 
 # bounding box 
-aoi_bb <- st_bbox(aoi)
+aoi_bb = st_bbox(aoi)
 
 # from Open Street Map select type of roads: primary, secondary, tertiary (paths)
-ht_secondary <- "secondary"
+ht_secondary = "secondary"
 
 # download roads from OSM: our region is Abruzzo, Italy
-osm_aoi <- oe_get("Abruzzo", stringsAsFactors = FALSE, quiet = TRUE)
-osm_aoi_roads <- osm_aoi[osm_aoi$highway %in% ht_secondary, ]
+osm_aoi = oe_get("Abruzzo", stringsAsFactors = FALSE, quiet = TRUE)
+osm_aoi_roads = osm_aoi[osm_aoi$highway %in% ht_secondary, ]
 plot(osm_aoi_roads$geometry)
 
 ```
@@ -108,20 +108,20 @@ Chelsa.Clim.download(
 # included in a directory that contains the word 'clipped'
 # (that's the style adopted by ClimDatDownloadR package)
 # Feel free to modify it if you have different requirements
-rastlist <- list.files(path ="my/path/bio/ChelsaV2.1Climatologies/clipped_2024-09-18_10-46-34", pattern = "CHELSA", full.names = TRUE)
+rastlist = list.files(path ="my/path/bio/ChelsaV2.1Climatologies/clipped_2024-09-18_10-46-34", pattern = "CHELSA", full.names = TRUE)
 
 # using the list of names, all the files are imported into a single raster package
-mydata <- stack(rastlist)
+mydata = stack(rastlist)
 
 # change data names
-names(mydata) <- c("bio01", "bio07", "bio13", "bio14")
+names(mydata) = c("bio01", "bio07", "bio13", "bio14")
 
 # crop and mask by region borders
-aoi_sp <- sf::as_Spatial(aoi)
-mydata <- mydata %>% crop(., aoi_sp) %>% mask(., aoi_sp)
+aoi_sp = sf::as_Spatial(aoi)
+mydata = mydata %>% crop(., aoi_sp) %>% mask(., aoi_sp)
 
 # original data: will be useful later
-mydata_backup <- mydata
+mydata_backup = mydata
 ```
 ## Virtual Species
 Generating random species from known environmental data allows controlling the factors that can influence the distribution of real data. This can be done through `virtualspecies` R package.  
@@ -136,7 +136,7 @@ To create a series of occurrence points for a species, it is necessary to go thr
 ## Random Virtual Species: run every time you want to create a virtual species.
 
 ## step 1: suitability map generation
-random.sp <- generateRandomSp(raster.stack = mydata,
+random.sp = generateRandomSp(raster.stack = mydata,
                               convert.to.PA = FALSE,
                               # how to combine response functions
                               species.type = "multiplicative",
@@ -149,13 +149,13 @@ random.sp <- generateRandomSp(raster.stack = mydata,
                               plot = FALSE)
 
 ## step 2: Presence/Absence: requires defining the parameters alpha, beta, and species prevalence
-new.pres <-convertToPA(random.sp,
+new.pres =convertToPA(random.sp,
                        beta = "random",
                        alpha = -0.05, plot = FALSE,
                        species.prevalence = 0.01)
 
 ## step 3: occurences
-presence.points <- sampleOccurrences(new.pres,
+presence.points = sampleOccurrences(new.pres,
                                      n = 200,
                                      type = "presence only",
                                      sample.prevalence = 0.9,
@@ -183,35 +183,35 @@ However, since we aim to calculate not just one but multiple hypervolumes as we 
 
 # Z transform for hypervolume building
 for (i in 1:nlayers(mydata)){
-  mydata[[i]] <- (mydata[[i]] - cellStats(mydata[[i]], 'mean')) / cellStats(mydata[[i]], 'sd') 
+  mydata[[i]] = (mydata[[i]] - cellStats(mydata[[i]], 'mean')) / cellStats(mydata[[i]], 'sd') 
 }
 
 # the raster of occurrences is transformed into a dataset, from which the rows satisfying both conditions Real = 1 and Observed = 1 are preserved
-raster_occurences <- presence.points$sample.points %>% as.data.frame() %>% .[.$Real == 1 & .$Observed == 1, ]
+raster_occurences = presence.points$sample.points %>% as.data.frame() %>% .[.$Real == 1 & .$Observed == 1, ]
 
 # the environmental variables are associated with the occurrences using their coordinates
-values_occ <- mydata %>% rasterToPoints() %>% as.data.frame()
-filtered_occ <- merge(values_occ, raster_occurences, by = c("x", "y"))
+values_occ = mydata %>% rasterToPoints() %>% as.data.frame()
+filtered_occ = merge(values_occ, raster_occurences, by = c("x", "y"))
 # useless columns 
-drops <- c("Real","Observed", "x", "y")
-occurrences_values <- filtered_occ[ , !(names(filtered_occ) %in% drops)]
+drops = c("Real","Observed", "x", "y")
+occurrences_values = filtered_occ[ , !(names(filtered_occ) %in% drops)]
 
 ## Functions for Hypervolume
 
 # Hypervolume: just the hypervolume value from hypervolume_gaussian function
-hyp_calc <- function(data) {
-  hv_occ <- hypervolume_gaussian(data)
+hyp_calc = function(data) {
+  hv_occ = hypervolume_gaussian(data)
   return(hv_occ@Volume)
 }
 
 # Function to build the accumulation curve with random increment in occurrences
-acc_curve <- function(x, no) {
+acc_curve = function(x, no) {
   # Starts with a random row
-  fx <- x %>% 
+  fx = x %>% 
     sample_n(size = 1) 
   
-  ipervolumi <- 0
-  num_occurrences <- 0
+  ipervolumi = 0
+  num_occurrences = 0
   
   for (i in 1:1000) {
     
@@ -219,17 +219,17 @@ acc_curve <- function(x, no) {
     # Random values are selected
     # They are bound to fx
     # Unique values are kept
-    fx <- x %>% 
+    fx = x %>% 
       sample_n(size = no) %>% 
       bind_rows(fx) %>% 
       distinct()
     
     # Hypervolume per subset
-    hv <- hyp_calc(fx)
+    hv = hyp_calc(fx)
     
     # Save hypervolume & number of occurrences
-    ipervolumi <- c(ipervolumi, hv)
-    num_occurrences <- c(num_occurrences, nrow(fx))
+    ipervolumi = c(ipervolumi, hv)
+    num_occurrences = c(num_occurrences, nrow(fx))
     
     # Condition
     # Stop when the subset has the same number of occurrences as the original set
@@ -238,7 +238,7 @@ acc_curve <- function(x, no) {
     }
   }
   
-  result <- bind_cols(iperv = ipervolumi, n_occ = num_occurrences)
+  result = bind_cols(iperv = ipervolumi, n_occ = num_occurrences)
   return(list(result))
 }
 ```
@@ -249,19 +249,19 @@ To obtain a subsample that shows sampling bias, we first need to associate each 
 
 ## Roadside bias
 # create raster with distances from roads
-roads_vect <- terra::vect(osm_aoi_roads$geometry)
+roads_vect = terra::vect(osm_aoi_roads$geometry)
 
 # turn into SpatRaster object
-raster_roads <- as(mydata_backup[[1]], "SpatRaster")
+raster_roads = as(mydata_backup[[1]], "SpatRaster")
 
 # rasterize distances
-r <- terra::rasterize(roads_vect, raster_roads)
-d <- distance(r, unit = "km") 
+r = terra::rasterize(roads_vect, raster_roads)
+d = distance(r, unit = "km") 
 
 ## plot: distance from roads
-d_rast <- d %>% raster() %>% crop(., aoi_sp) %>% mask(., aoi_sp)
-raster_df_dist <- as.data.frame(rasterToPoints(d_rast), xy = TRUE)
-value_column <- names(raster_df_dist)[3]
+d_rast = d %>% raster() %>% crop(., aoi_sp) %>% mask(., aoi_sp)
+raster_df_dist = as.data.frame(rasterToPoints(d_rast), xy = TRUE)
+value_column = names(raster_df_dist)[3]
 
 ggplot() +
   # Add raster
@@ -295,25 +295,25 @@ After setting a probability threshold, we selected the points that fall on pixel
 ``` r
 
 ## extract distances
-d_raster <- d %>% raster()
-distances <- d_raster %>%  as.data.frame()
+d_raster = d %>% raster()
+distances = d_raster %>%  as.data.frame()
 
 ## sampling probability function: simulation of the lazy sampler
-c <- 1
-sampling_prob <- 1-(((log(c*distances))/(log(max(c*distances)))))
-sampling_prob <- as.data.frame(sampling_prob)
+c = 1
+sampling_prob = 1-(((log(c*distances))/(log(max(c*distances)))))
+sampling_prob = as.data.frame(sampling_prob)
 
 # some values are: Inf. Replace those values with 1
-sampling_prob[sampling_prob == Inf] <- 1
-sampling_prob[sampling_prob > 1] <- 1
+sampling_prob[sampling_prob == Inf] = 1
+sampling_prob[sampling_prob > 1] = 1
 
 # new raster with probability to be sampled instead of distances
-prob_raster <- classify(d, cbind(values(d), sampling_prob))
+prob_raster = classify(d, cbind(values(d), sampling_prob))
 
 ## plot: sampling probability
-prob_r <- prob_raster %>% raster() %>% crop(., aoi_sp) %>% mask(., aoi_sp)
-raster_df_prob <- as.data.frame(rasterToPoints(prob_r), xy = TRUE)
-value_column <- names(raster_df_prob)[3]
+prob_r = prob_raster %>% raster() %>% crop(., aoi_sp) %>% mask(., aoi_sp)
+raster_df_prob = as.data.frame(rasterToPoints(prob_r), xy = TRUE)
+value_column = names(raster_df_prob)[3]
 
 ggplot() +
   # Add raster
@@ -340,32 +340,32 @@ Ora associamo a ciascun punto la propria probabilità di essere campionato e fil
 
 ``` r
 ## occurrences as points
-coord_occ <- terra::vect(filtered_occ, geom = c("x","y"), crs="epsg:4326")
+coord_occ = terra::vect(filtered_occ, geom = c("x","y"), crs="epsg:4326")
 
 
 # add probability value
-points_biased <- coord_occ %>%
+points_biased = coord_occ %>%
   cbind(terra::extract(prob_raster, ., ID = FALSE)) %>%
   subset(.$layer == 1)
 
 
 ## hypervolume of occurrences (random sampled: null model) 
 # num. simulations each species
-num_sim <- 3
+num_sim = 3
 
 # set stop point according to the number of biased occurrences: same sampling effort
 nrow(points_biased)
 nrow(occurrences_values)
-stop <-  ceiling(nrow(points_biased) + 0.2 * (nrow(points_biased)))
+stop =  ceiling(nrow(points_biased) + 0.2 * (nrow(points_biased)))
 
 # random subsample of occurrences from null model: 20%
-occurrences_values <- occurrences_values[sample(nrow(occurrences_values), stop), ]
+occurrences_values = occurrences_values[sample(nrow(occurrences_values), stop), ]
 
 ## plot: map with unbiased-biased points
 # index
-indices <- rownames(occurrences_values)
-indices <- as.numeric(indices)
-filtered_coord_occ <- coord_occ[indices, ]
+indices = rownames(occurrences_values)
+indices = as.numeric(indices)
+filtered_coord_occ = coord_occ[indices, ]
 
 par(mfrow=c(1,1), mar=c(2,2,2,0.5)) 
 
@@ -394,41 +394,41 @@ The accumulation curve will be simulated 10 times in order to obtain an average.
 
 ``` r
 # list with the occurrences we want to test
-hyp_steps <- c(seq(from = 40, to = stop, by = 30), stop)
+hyp_steps = c(seq(from = 40, to = stop, by = 30), stop)
 
 # empty list 
-all_sim <- list()
+all_sim = list()
 
 # for cycle for simulations
 for (sim in 1:num_sim) {
   
-  list_output <- list()
+  list_output = list()
   
   for (i in seq_along(hyp_steps)) {
-    d_hyp <- acc_curve(occurrences_values, hyp_steps[i])
-    list_output[[i]] <- d_hyp[[1]]
+    d_hyp = acc_curve(occurrences_values, hyp_steps[i])
+    list_output[[i]] = d_hyp[[1]]
     }
   
-  all_sim[[sim]] <- list_output
+  all_sim[[sim]] = list_output
   
 }
 
 # all simulations in one df
-combined_df <- do.call(rbind, lapply(seq_along(all_sim), function(sim) {
+combined_df = do.call(rbind, lapply(seq_along(all_sim), function(sim) {
   do.call(rbind, lapply(all_sim[[sim]], function(df) {
-    df$sim <- sim
+    df$sim = sim
     df
   }))
 }))
 
 
 # mean predictions (LOESS): x sequence 
-x_seq <- seq(min(combined_df$n_occ), max(combined_df$n_occ), length.out = 100)
+x_seq = seq(min(combined_df$n_occ), max(combined_df$n_occ), length.out = 100)
 
 # mean predictions: LOESS method
-loess_predictions <- lapply(unique(combined_df$n_occ), function(n) {
-  preds <- sapply(all_sim, function(lista) {
-    loess_fit <- loess(iperv ~ n_occ, data = do.call(rbind, lista))
+loess_predictions = lapply(unique(combined_df$n_occ), function(n) {
+  preds = sapply(all_sim, function(lista) {
+    loess_fit = loess(iperv ~ n_occ, data = do.call(rbind, lista))
     predict(loess_fit, newdata = data.frame(n_occ = n))
   })
   
@@ -438,7 +438,7 @@ loess_predictions <- lapply(unique(combined_df$n_occ), function(n) {
 
 
 # mean df
-pred_mean <- do.call(rbind, loess_predictions)
+pred_mean = do.call(rbind, loess_predictions)
 
 # plot: unbiased hypervolume
 ggplot() +
@@ -460,36 +460,36 @@ ggplot() +
 Ora calcoliamo l'ipervolume del sottocampione biased.
 ``` r
 ## hypervolume of biased occurrences (road driven: biased sampling)
-biased_df <- points_biased %>%
+biased_df = points_biased %>%
   as.data.frame() %>%
   .[,-c(5:8)]
 
 # stop
-stop_biased <- nrow(biased_df)
-hyp_steps_b <- c(seq(from = 20, to = stop_biased, by = 20), stop_biased)
+stop_biased = nrow(biased_df)
+hyp_steps_b = c(seq(from = 20, to = stop_biased, by = 20), stop_biased)
 
 # empty list
-all_sim_b <- list()
+all_sim_b = list()
 
 # for cycle for simulations
 for (sim in 1:num_sim) {
   
-  list_output_b <- list()
+  list_output_b = list()
   
   for (i in seq_along(hyp_steps_b)) {
-    d_hyp <- acc_curve(biased_df, hyp_steps_b[i])
-    list_output_b[[i]] <- d_hyp[[1]]
+    d_hyp = acc_curve(biased_df, hyp_steps_b[i])
+    list_output_b[[i]] = d_hyp[[1]]
     }
   
-  all_sim_b[[sim]] <- list_output_b
+  all_sim_b[[sim]] = list_output_b
   
 }
 
 # combined df
-combined_df_biased <- do.call(rbind, lapply(seq_along(all_sim_b), function(sim) {
+combined_df_biased = do.call(rbind, lapply(seq_along(all_sim_b), function(sim) {
   
   do.call(rbind, lapply(all_sim_b[[sim]], function(df) {
-    df$sim <- sim
+    df$sim = sim
     df
     
   }))
@@ -498,10 +498,10 @@ combined_df_biased <- do.call(rbind, lapply(seq_along(all_sim_b), function(sim) 
 
 
 # mean LOESS
-loess_predictions_biased <- lapply(unique(combined_df_biased$n_occ), function(n) {
+loess_predictions_biased = lapply(unique(combined_df_biased$n_occ), function(n) {
   
-  preds <- sapply(all_sim_b, function(lista) {
-    loess_fit <- loess(iperv ~ n_occ, data = do.call(rbind, lista))
+  preds = sapply(all_sim_b, function(lista) {
+    loess_fit = loess(iperv ~ n_occ, data = do.call(rbind, lista))
     predict(loess_fit, newdata = data.frame(n_occ = n))
   })
   
@@ -510,7 +510,7 @@ loess_predictions_biased <- lapply(unique(combined_df_biased$n_occ), function(n)
 })
 
 # mean in one df
-pred_mean_b <- do.call(rbind, loess_predictions_biased)
+pred_mean_b = do.call(rbind, loess_predictions_biased)
 
 ## plot: biased hypervolume
 ggplot() +
@@ -530,13 +530,13 @@ ggplot() +
 Mettiamo nello stesso grafico i due ipervolumi, ricordando che fanno riferimento alla stessa specie
 ``` r
 # plot: unbiased & biased
-combined_df$total <- "unbiased"
-combined_df_biased$total <- "biased"
-combined_data <- rbind(combined_df, combined_df_biased)
+combined_df$total = "unbiased"
+combined_df_biased$total = "biased"
+combined_data = rbind(combined_df, combined_df_biased)
 
 # filter NA
-pred_mean <- pred_mean %>% filter(!is.na(n_occ) & !is.na(iperv_mean))
-pred_mean_b <- pred_mean_b %>% filter(!is.na(n_occ) & !is.na(iperv_mean))
+pred_mean = pred_mean %>% filter(!is.na(n_occ) & !is.na(iperv_mean))
+pred_mean_b = pred_mean_b %>% filter(!is.na(n_occ) & !is.na(iperv_mean))
 
 
 ggplot() +
@@ -580,27 +580,27 @@ The model built on the unbiased dataset will be called the **null model**, while
 # a machine learning algorithm will be applied to learn the relationships between predictors and response
 
 ## train data: must be converted in the format required by terra::extract
-pa_points <- presence.points$sample.points[,-(3:4)] %>% as.data.frame() %>% st_as_sf(., coords = c("x","y"), crs = 4326)
+pa_points = presence.points$sample.points[,-(3:4)] %>% as.data.frame() %>% st_as_sf(., coords = c("x","y"), crs = 4326)
 
 # raster data
-mydata_aoa <- rast(mydata_backup)
+mydata_aoa = rast(mydata_backup)
 
 # subset of the original 200 points
-pa_points <- pa_points[rownames(occurrences_values), ]
+pa_points = pa_points[rownames(occurrences_values), ]
 
 # from raster, extract corresponding values 
-trainDat_null <- terra::extract(mydata_aoa, pa_points, na.rm = FALSE)
+trainDat_null = terra::extract(mydata_aoa, pa_points, na.rm = FALSE)
 
 # from raster, extract suitability values, NA omit, assign spatial reference
-trainDat_null$response <- terra::extract(random.sp$suitab.raster, pa_points, na.rm=FALSE, ID=FALSE)
-trainDat_null <- data.frame(trainDat_null, pa_points) %>% na.omit()
+trainDat_null$response = terra::extract(random.sp$suitab.raster, pa_points, na.rm=FALSE, ID=FALSE)
+trainDat_null = data.frame(trainDat_null, pa_points) %>% na.omit()
 
 ## train model for Spatially Clustered Data
 # train from CARET package: data train, data output, method (Random Forest) and Cross Validation 
-folds_null <- CreateSpacetimeFolds(trainDat_null, spacevar = "geometry", k = 4)
+folds_null = CreateSpacetimeFolds(trainDat_null, spacevar = "geometry", k = 4)
 
 set.seed(15)
-model_null <- train(trainDat_null[,names(mydata_aoa)],
+model_null = train(trainDat_null[,names(mydata_aoa)],
                     trainDat_null$response$`VSP suitability`,
                     method = "rf",
                     importance = TRUE,
@@ -609,14 +609,14 @@ model_null <- train(trainDat_null[,names(mydata_aoa)],
 
 ## predict and calculate error 
 # the trained model is then used to make predictions for the entire area of interest
-prediction_null <- predict(mydata_aoa, model_null, na.rm=T)
+prediction_null = predict(mydata_aoa, model_null, na.rm=T)
 
 # the difference bewteen prediction and reference is the true prediction error 
-truediff_null <- abs(prediction_null - random.sp$suitab.raster)
+truediff_null = abs(prediction_null - random.sp$suitab.raster)
 
 ## the AOA calculation takes the model as input to extract the importance of the predictors 
 # used as weights in multidimensional distance calculation.
-AOA_null <- aoa(mydata_aoa, model_null, LPD = TRUE, verbose = FALSE)
+AOA_null = aoa(mydata_aoa, model_null, LPD = TRUE, verbose = FALSE)
 
 # AOA: derived from the DI by using a threshold.
 plot(prediction_null, col=inferno(100), main = "Prediction for Area of Applicability")
@@ -632,24 +632,24 @@ Now, let's see how it works if we train the algorithm on biased data
 
 ``` r
 ## biased points
-biased_sp_points <- points_biased %>% st_as_sf(., crs = 4326)
-biased_sp_points <- biased_sp_points[,-(1:8)]
+biased_sp_points = points_biased %>% st_as_sf(., crs = 4326)
+biased_sp_points = biased_sp_points[,-(1:8)]
 
 # from raster, extract corresponding values 
-trainDat_biased <- terra::extract(mydata_aoa, biased_sp_points, na.rm=FALSE)
+trainDat_biased = terra::extract(mydata_aoa, biased_sp_points, na.rm=FALSE)
 
 # from raster, extract suitability values 
-trainDat_biased$response <- terra::extract(random.sp$suitab.raster, biased_sp_points, na.rm = FALSE, ID=FALSE)
-trainDat_biased <- data.frame(trainDat_biased, biased_sp_points)
+trainDat_biased$response = terra::extract(random.sp$suitab.raster, biased_sp_points, na.rm = FALSE, ID=FALSE)
+trainDat_biased = data.frame(trainDat_biased, biased_sp_points)
 
 # omit NA
-trainDat_biased <- na.omit(trainDat_biased)
+trainDat_biased = na.omit(trainDat_biased)
 
 ## train model
 # train from CARET package: data train, data output, method (Random Forest) and Cross Validation 
-folds_biased <- CreateSpacetimeFolds(trainDat_biased, spacevar = "geometry", k = 10)
+folds_biased = CreateSpacetimeFolds(trainDat_biased, spacevar = "geometry", k = 10)
 set.seed(15)
-model_biased <- train(trainDat_biased[,names(mydata_aoa)],
+model_biased = train(trainDat_biased[,names(mydata_aoa)],
                       trainDat_biased$response$`VSP suitability`,
                       method = "rf",
                       importance = TRUE,
@@ -658,10 +658,10 @@ model_biased <- train(trainDat_biased[,names(mydata_aoa)],
 
 ## predict and calculate error 
 # the trained model is then used to make predictions for the entire area of interest
-prediction_biased <- predict(mydata_aoa, model_biased, na.rm=T)
+prediction_biased = predict(mydata_aoa, model_biased, na.rm=T)
 
 # difference bewteen prediction and reference: true prediction error 
-truediff_biased <- abs(prediction_biased - random.sp$suitab.raster)
+truediff_biased = abs(prediction_biased - random.sp$suitab.raster)
 
 # Random Forest trained on unbiased and biased data
 par(mfrow = c(1, 2)) 
@@ -679,7 +679,7 @@ plot(prediction_biased, main = "RF Biased data", col = inferno(500, alpha = 1, b
 
 ## the AOA calculation takes the model as input to extract the importance of the predictors 
 # used as weights in multidimensional distance calculation.
-AOA_biased <- aoa(mydata_aoa, model_biased, LPD = TRUE, verbose = FALSE)
+AOA_biased = aoa(mydata_aoa, model_biased, LPD = TRUE, verbose = FALSE)
 
 # AOA: derived from the DI by using a threshold.
 plot(prediction_biased, col=inferno(100), main = "Prediction for AOA (Biased)")
@@ -710,22 +710,22 @@ Finally, let's see the different amount of pixels
 
 ## difference? Show in the map (calc. pixel)
 # unbiased masked 
-masked_raster_null <- mask(prediction_null, AOA_null$AOA, maskvalues=0, updatevalue=NA)
+masked_raster_null = mask(prediction_null, AOA_null$AOA, maskvalues=0, updatevalue=NA)
 
 # biased masked
-masked_raster_biased <- mask(prediction_biased, AOA_biased$AOA, maskvalues=0, updatevalue=NA)
+masked_raster_biased = mask(prediction_biased, AOA_biased$AOA, maskvalues=0, updatevalue=NA)
 
 # pixels in null model only
-diff_null_only <- ifel(!is.na(masked_raster_null) & is.na(masked_raster_biased), 1, NA)
+diff_null_only = ifel(!is.na(masked_raster_null) & is.na(masked_raster_biased), 1, NA)
 
 # pixels in biased model only
-diff_biased_only <- ifel(is.na(masked_raster_null) & !is.na(masked_raster_biased), -1, NA)
+diff_biased_only = ifel(is.na(masked_raster_null) & !is.na(masked_raster_biased), -1, NA)
 
 # merge
-diff_raster <- merge(diff_null_only, diff_biased_only)
+diff_raster = merge(diff_null_only, diff_biased_only)
 
 # palette
-col_palette <- c("deeppink", "darkgreen")
+col_palette = c("deeppink", "darkgreen")
 
 # Plot
 par(mfrow = c(1, 3), mar = c(5, 4, 4, 4) + 0.1)
