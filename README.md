@@ -69,9 +69,9 @@ The study area is Luxembourg.
 # The var parameter is the variable name, with valid values as tmin, tmax, tavg, prec, wind, vapr and bio.
 # The worldclim_country function will return 12 layers of raster (in a SpatRaster), for each variable. 
 
-tmin <- worldclim_country("Lux", "tmin", path=tempdir(), res = 0.5, version = "2.1")
-tmax <- worldclim_country("Lux", "tmax", path=tempdir(), res = 0.5, version = "2.1")
-prec <- worldclim_country("Lux", "prec", path=tempdir(), res = 0.5, version = "2.1")
+tmin = worldclim_country("Lux", "tmin", path=tempdir(), res = 0.5, version = "2.1")
+tmax = worldclim_country("Lux", "tmax", path=tempdir(), res = 0.5, version = "2.1")
+prec = worldclim_country("Lux", "prec", path=tempdir(), res = 0.5, version = "2.1")
 
 # 12 months of precipitation in Luxembourg. Each layer represents the average value for a month.
 plot(tmin, col = plasma(500, alpha = 1, begin = 0, end = 1, direction = 1))
@@ -85,8 +85,8 @@ Even if there are 12 rasters, each corresponding to a month, the temporal dimens
 
 ``` r
 # here, we will simply use numbers from 1 to 12 to represent # the months.
-time(tmin) <- time(tmax) <- time(prec) <- 1:12
-climate_vars <- c("tmin", "tmax", "prec")
+time(tmin) = time(tmax) = time(prec) = 1:12
+climate_vars = c("tmin", "tmax", "prec")
 
 print(tmin)
 # class       : SpatRaster 
@@ -111,7 +111,7 @@ The [stars R package](https://r-spatial.github.io/stars/) provides an infrastruc
 We will create a stars object that contains the climatic variables as attributes and x and y as dimensions. This way, we have everything we need to proceed into a single object.
 ```r
 # first, we create a list that contains all the stacks, to which we apply st_as_stars.
-stars_clima <- list(tmin, tmax, prec) %>%
+stars_clima = list(tmin, tmax, prec) %>%
   lapply(st_as_stars) %>%
   do.call("c", .) %>%
   setNames(climate_vars)
@@ -148,28 +148,28 @@ We will calculate the suitability for each species over the first two months, ja
 # Let's choose to work with the first two months. For both months, we will create a stack containing the 3 climatic variables.
 
 # number of months
-num_months <- 2
+num_months = 2
 
 
 # list of RasterStacks for each month
-raster_stacks <- map(1:num_months, function(month) {
+raster_stacks = map(1:num_months, function(month) {
 
    # extraction and convertion of the climatic variables
-    layers <- map(climate_vars, function(var) {
+    layers = map(climate_vars, function(var) {
      as(stars_clima[var,,,month], "Raster")  
      # convertion into rasters
     })
 
   # layer stack of the current month
-  stack_month <- stack(layers)
+  stack_month = stack(layers)
   # names
-  names(stack_month) <- climate_vars
+  names(stack_month) = climate_vars
   return(stack_month)
 })
 
 
-january <- raster_stacks[[1]]
-february <- raster_stacks[[2]]
+january = raster_stacks[[1]]
+february = raster_stacks[[2]]
 
 print(january)
 # class      : RasterStack 
@@ -193,9 +193,9 @@ The following function uses the `generateRandomSp` function from the `virtualspe
 
 Each time the function is executed, a new random species is generated. Therefore, to ensure that we obtain the same species, we need to set a fixed seed using `set.seed()`
 ```r
-generate_suitability <- function(climate_stack, seed_value) {
+generate_suitability = function(climate_stack, seed_value) {
   set.seed(seed_value)
-  random_sp <- generateRandomSp(raster.stack = climate_stack,
+  random_sp = generateRandomSp(raster.stack = climate_stack,
                                 convert.to.PA = FALSE,
                                 species.type = "multiplicative",
                                 approach = "response",
@@ -207,17 +207,17 @@ generate_suitability <- function(climate_stack, seed_value) {
 }
 
 # generate the suitability for species 1 in January and February and create a single object for species 1 that contains the suitability for both months
-suit_sp1_jan <- generate_suitability(january, seed_value = 121)
-suit_sp1_feb <- generate_suitability(february, seed_value = 121)
-suit_sp1 <- c(suit_sp1_feb, suit_sp1_jan)  
+suit_sp1_jan = generate_suitability(january, seed_value = 121)
+suit_sp1_feb = generate_suitability(february, seed_value = 121)
+suit_sp1 = c(suit_sp1_feb, suit_sp1_jan)  
 
 # same for species 2
-suit_sp2_jan <- generate_suitability(january, seed_value = 456)
-suit_sp2_feb <- generate_suitability(february, seed_value = 456)
-suit_sp2 <- c(suit_sp2_feb, suit_sp2_jan)  
+suit_sp2_jan = generate_suitability(january, seed_value = 456)
+suit_sp2_feb = generate_suitability(february, seed_value = 456)
+suit_sp2 = c(suit_sp2_feb, suit_sp2_jan)  
 
 # add time dimension
-time(suit_sp2) <- time(suit_sp1) <- 1:2  
+time(suit_sp2) = time(suit_sp1) = 1:2  
 
 # suitability for Species 1
 plot(suit_sp1, col = viridis(500, alpha = 1, begin = 0, end = 1, direction = 1))
@@ -241,12 +241,12 @@ title("Suitability of Species 2 in Jan-Feb", outer=TRUE, line=-0.9)
 For each species, we will create a data cube: the dimensions remain x, y, and time, but this time the attribute is the suitability only, with values ranging from 0 to 1, which characterizes each species.
 ```r
 # stars cube for Species 1
-suit_sp1 <- list(suit_sp1)
-suit_cube_sp1 <- do.call("c", lapply(suit_sp1, stars::st_as_stars)) %>% setNames(., c("suit"))
+suit_sp1 = list(suit_sp1)
+suit_cube_sp1 = do.call("c", lapply(suit_sp1, stars::st_as_stars)) %>% setNames(., c("suit"))
 
 # stars cube for Species 2
-suit_sp2 <- list(suit_sp2)
-suit_cube_sp2 <- do.call("c", lapply(suit_sp2, stars::st_as_stars)) %>% setNames(., c("suit"))
+suit_sp2 = list(suit_sp2)
+suit_cube_sp2 = do.call("c", lapply(suit_sp2, stars::st_as_stars)) %>% setNames(., c("suit"))
 ```
 ```r
 print(suit_cube_sp1)
@@ -283,20 +283,20 @@ In this process, pixels in the raster are grouped based on their spatial interse
 By creating the grid, it is possible to reduce two dimensions (x and y) into a single one (cell): this way, we can observe the suitability over time for both species within the defined polygons. As a result, "species" becomes an additional dimension in our data structure.
 ``` r
 # bounding box
-bb_lux <- st_bbox(tmin)
+bb_lux = st_bbox(tmin)
 
 # from bounding box to polygon
-sf_lux <- st_as_sfc(bb_lux) %>% 
+sf_lux = st_as_sfc(bb_lux) %>% 
   st_sf()
 
 # grid
-lux_grid <- st_make_grid(sf_lux, cellsize = .1, n = c(100, 100), what = "polygons", square = FALSE, offset = st_bbox(sf_lux)[c("xmin", "ymin")]) %>% 
+lux_grid = st_make_grid(sf_lux, cellsize = .1, n = c(100, 100), what = "polygons", square = FALSE, offset = st_bbox(sf_lux)[c("xmin", "ymin")]) %>% 
   st_as_sf() %>% 
   mutate(id = 1:nrow(.))
 
 # plot raster with grid
 # Convert SpatRaster to dataframe
-tmin_df <- as.data.frame(tmin$LUX_wc2.1_30s_tmin_1, xy = TRUE, na.rm = TRUE)
+tmin_df = as.data.frame(tmin$LUX_wc2.1_30s_tmin_1, xy = TRUE, na.rm = TRUE)
 
 ggplot() +
   # Add raster layer
@@ -318,9 +318,9 @@ ggplot() +
 
 ```r
 # aggregate by cells, calculating the average of the suitability values within each cell
-agg_sp1 <- aggregate(suit_cube_sp1, lux_grid, mean, as_points = TRUE, na.action = na.omit)
+agg_sp1 = aggregate(suit_cube_sp1, lux_grid, mean, as_points = TRUE, na.action = na.omit)
 
-agg_sp2 <- aggregate(suit_cube_sp2, lux_grid, mean, as_points = TRUE, na.action = na.omit)
+agg_sp2 = aggregate(suit_cube_sp2, lux_grid, mean, as_points = TRUE, na.action = na.omit)
 
 print(agg_sp1)
 # stars object with 2 dimensions and 1 attribute
@@ -345,7 +345,7 @@ print(agg_sp2)
 Finally, we merge the two cubes. Now the dimensions are 3 again: cell, time and species. The attribute represents the species' suitability over time and space.
 
 ``` r
-cube_sp1sp2 <- c(agg_sp1, agg_sp2) %>%  
+cube_sp1sp2 = c(agg_sp1, agg_sp2) %>%  
   st_redimension() %>% 
   st_set_dimensions(., which = "new_dim", values = c("specie1","specie2"), names = "species") %>%
   st_set_dimensions(., which = "time", values = c("jan","feb"), names = "month") %>% 
@@ -369,7 +369,7 @@ Let's suppose we have a specific point in space: we want to investigate the suit
 With `pull` function you can extract the attributes in a specific point of space and time.
 ```r
 # first, we need to identify the corresponding cell for that location.
-which_cell <- st_sf(geometry = st_sfc(st_point(c(5.5, 49.0)), crs = 4326))  %>%  st_join(., lux_grid) 
+which_cell = st_sf(geometry = st_sfc(st_point(c(5.5, 49.0)), crs = 4326))  %>%  st_join(., lux_grid) 
 print(which_cell$id)
 # [1] 10
 
@@ -385,14 +385,14 @@ pull(cube_sp1sp2[,10,,], "suitability")
 # [1,] 0.001298286 0.007460382
 
 ## we can better visualize this information this way:
-values_suit <- pull(cube_sp1sp2[,10,,], "suitability")
+values_suit = pull(cube_sp1sp2[,10,,], "suitability")
 # transform values_suit into a long format without rewriting it
-df_long <- melt(values_suit)
-colnames(df_long) <- c("cell", "time", "species", "suitability")
+df_long = melt(values_suit)
+colnames(df_long) = c("cell", "time", "species", "suitability")
 
 # convert time and species into factors
-df_long$time <- factor(df_long$time, labels = c("Jan", "Feb"))
-df_long$species <- factor(df_long$species, labels = c("Species 1", "Species 2"))
+df_long$time = factor(df_long$time, labels = c("Jan", "Feb"))
+df_long$species = factor(df_long$species, labels = c("Species 1", "Species 2"))
 
 # plot
 ggplot(df_long, aes(x = species, y = suitability, color = species)) +
@@ -467,19 +467,19 @@ Data collection and aggregation in a data cube that contains the climatic variab
 # The res paramater is the resolution, with valid values as 10,5,2.5 and 0.5 
 # The var parameter is the variable name, with valid values as tmin, tmax, tavg, prec, wind, vapr and bio.
 # The worldclim_country function will return 12 layers of raster (in a SpatRaster), for each variable. 
-tmin <- worldclim_country("Nld", "tmin", path=tempdir(), res = 0.5, version = "2.1")
-tmax <- worldclim_country("Nld", "tmax", path=tempdir(), res = 0.5, version = "2.1")
-prec <- worldclim_country("Nld", "prec", path=tempdir(), res = 0.5, version = "2.1")
-tavg <- worldclim_country("Nld", "tavg", path=tempdir(), res = 0.5, version = "2.1")
-wind <- worldclim_country("Nld", "wind", path=tempdir(), res = 0.5, version = "2.1")
+tmin = worldclim_country("Nld", "tmin", path=tempdir(), res = 0.5, version = "2.1")
+tmax = worldclim_country("Nld", "tmax", path=tempdir(), res = 0.5, version = "2.1")
+prec = worldclim_country("Nld", "prec", path=tempdir(), res = 0.5, version = "2.1")
+tavg = worldclim_country("Nld", "tavg", path=tempdir(), res = 0.5, version = "2.1")
+wind = worldclim_country("Nld", "wind", path=tempdir(), res = 0.5, version = "2.1")
 
 # add time
-time(tmin) <- time(tmax) <- time(prec) <- time(tavg) <- time(wind) <- 1:12
+time(tmin) = time(tmax) = time(prec) = time(tavg) = time(wind) = 1:12
 
-climate_vars <- c("tmin", "tmax", "prec", "tavg", "wind")
+climate_vars = c("tmin", "tmax", "prec", "tavg", "wind")
 
 # first, we create a list that contains all the stacks, to which we apply st_as_stars.
-stars_clima <- list(tmin, tmax, prec, tavg, wind) %>%
+stars_clima = list(tmin, tmax, prec, tavg, wind) %>%
   lapply(st_as_stars) %>%
   do.call("c", .) %>%
   setNames(climate_vars)
@@ -502,10 +502,10 @@ print(stars_clima)
 # time    1  12      1         1     NA    NA    
 
 # training month
-clima_may <- stars_clima %>% slice("time", 5) 
+clima_may = stars_clima %>% slice("time", 5) 
 
 # predictors
-clima_train <- rast(clima_may) %>% 
+clima_train = rast(clima_may) %>% 
   setNames(climate_vars)
 
 plot(clima_train)
@@ -532,12 +532,12 @@ They will be use for training MaxEnt model
 
 # upload the dataset
 # read txt
-occ <- read.delim("occurrence.txt", sep = "\t", header = TRUE, quote = "", stringsAsFactors = FALSE) %>%
+occ = read.delim("occurrence.txt", sep = "\t", header = TRUE, quote = "", stringsAsFactors = FALSE) %>%
   select(scientificName, decimalLatitude, decimalLongitude, year)
 
 ## plot
 # Filter years from 2000 to 2017
-occ_counts <- occ %>%
+occ_counts = occ %>%
   filter(year >= 2000 & year <= 2017) %>%
   group_by(scientificName, year) %>%
   summarise(count = n(), .groups = "drop")
@@ -565,7 +565,7 @@ ggplot(occ_counts, aes(x = year, y = scientificName, fill = count)) +
 
 ``` r
 # filter year
-occ <- occ %>% 
+occ = occ %>% 
   filter(year >= 2000 & year <= 2017) %>%
   filter(!is.na(decimalLatitude) & !is.na(decimalLongitude))
 
@@ -579,7 +579,7 @@ head(occ)
 # 6 Anemone nemorosa L.        50.88266          5.82037 2014
 
 # split dataset by species with the function split_species_data
-species <- split_species_data(occ)
+species = split_species_data(occ)
 
 typeof(species)
 # [1] "list"
@@ -594,7 +594,7 @@ Models are then saved and can be used for predicting in a new area. The output c
 
 ``` r
 # creating SDMs with MaxEnt for many species in the same area, with the same predictors
-sdms <- create_sdm_for_species_list(species, clima_train, background_points = 10000, predictors = names(clima_train))
+sdms = create_sdm_for_species_list(species, clima_train, background_points = 10000, predictors = names(clima_train))
 
 # plot suitability map for Anemone nemorosa L. in The Netherlands
 plot(sdms$predictions$`Anemone nemorosa L.`)
@@ -611,30 +611,30 @@ Based on the models previously trained, let's check the suitability of our speci
 ```r
 # predictions for the same species but in another area (Belgium)
 # same climatic variables
-tmin_b <- worldclim_country("Bel", "tmin", path=tempdir(), res = 0.5, version = "2.1")
-tmax_b <- worldclim_country("Bel", "tmax", path=tempdir(), res = 0.5, version = "2.1")
-prec_b <- worldclim_country("Bel", "prec", path=tempdir(), res = 0.5, version = "2.1")
-tavg_b <- worldclim_country("Bel", "tavg", path=tempdir(), res = 0.5, version = "2.1")
-wind_b <- worldclim_country("Bel", "wind", path=tempdir(), res = 0.5, version = "2.1")
+tmin_b = worldclim_country("Bel", "tmin", path=tempdir(), res = 0.5, version = "2.1")
+tmax_b = worldclim_country("Bel", "tmax", path=tempdir(), res = 0.5, version = "2.1")
+prec_b = worldclim_country("Bel", "prec", path=tempdir(), res = 0.5, version = "2.1")
+tavg_b = worldclim_country("Bel", "tavg", path=tempdir(), res = 0.5, version = "2.1")
+wind_b = worldclim_country("Bel", "wind", path=tempdir(), res = 0.5, version = "2.1")
 
 # time
-time(tmin_b) <- time(tmax_b) <- time(prec_b) <- time(tavg_b) <- time(wind_b) <- 1:12
+time(tmin_b) = time(tmax_b) = time(prec_b) = time(tavg_b) = time(wind_b) = 1:12
 
 # stars object of Belgium
-stars_clima_bel <- list(tmin_b, tmax_b, prec_b, tavg_b, wind_b) %>%
+stars_clima_bel = list(tmin_b, tmax_b, prec_b, tavg_b, wind_b) %>%
   lapply(st_as_stars) %>%
   do.call("c", .) %>%
   setNames(climate_vars)
 
 # may for Belgium (we want to see suitability predictions for the same month)
-clima_may_bel <- stars_clima_bel %>% slice("time", 5) 
+clima_may_bel = stars_clima_bel %>% slice("time", 5) 
 
 # predictors in may
-clima_train_bel_may <- rast(clima_may_bel) %>% 
+clima_train_bel_may = rast(clima_may_bel) %>% 
   setNames(climate_vars)
 
 # predicting suitability in a new area for the same species using the models trained previously 
-new_predictions_may <- predict_sdm_for_new_area(sdms$models, clima_train_bel_may)
+new_predictions_may = predict_sdm_for_new_area(sdms$models, clima_train_bel_may)
 
 # the output is a data cube with suitability as attribute
 print(new_predictions_may)
@@ -657,20 +657,20 @@ In line with the structure proposed by the B-Cubed framework, we aim to summariz
 ```r
 ## aggregation steps
 # bounding box
-bbox <- st_bbox(tmin_b)
-sf_bel <- st_as_sfc(bbox) %>% 
+bbox = st_bbox(tmin_b)
+sf_bel = st_as_sfc(bbox) %>% 
   st_sf()
 
 # grid
-bel_grid <- st_make_grid(sf_bel, cellsize = .1, n = c(50, 50), what = "polygons", square = FALSE, offset = st_bbox(sf_bel)[c("xmin", "ymin")]) %>% 
+bel_grid = st_make_grid(sf_bel, cellsize = .1, n = c(50, 50), what = "polygons", square = FALSE, offset = st_bbox(sf_bel)[c("xmin", "ymin")]) %>% 
   st_as_sf() %>% 
   mutate(id = 1:nrow(.))
 
 # plot raster with grid
 # convert SpatRaster to dataframe
-tmin_df <- as.data.frame(tmin_b$BEL_wc2.1_30s_tmin_1, xy = TRUE, na.rm = TRUE)
+tmin_df = as.data.frame(tmin_b$BEL_wc2.1_30s_tmin_1, xy = TRUE, na.rm = TRUE)
 tmin_df
-p <- ggplot() +
+p = ggplot() +
   geom_raster(data = tmin_df, aes(x = x, y = y, fill = BEL_wc2.1_30s_tmin_1)) +
   scale_fill_viridis_c(alpha = 1, begin = 0, end = 1, option = "viridis") +
   geom_sf(data = bel_grid, color = "black", size = 0.5, fill = NA, alpha = 0.2) +
@@ -690,7 +690,7 @@ plot(p)
 
 ```r
 # aggregating suitability values of the species over polygons for a given area
-stars_predictions_aggregated <- aggregate_suitability(new_predictions_may, bel_grid)
+stars_predictions_aggregated = aggregate_suitability(new_predictions_may, bel_grid)
 
 # output: data cube
 print(stars_predictions_aggregated)
@@ -706,7 +706,7 @@ print(stars_predictions_aggregated)
 
 
 # first, we need to identify the corresponding cell for that location.
-which_cell <- st_sf(geometry = st_sfc(st_point(c(4.3517, 50.8503)), crs = 4326))  %>%  st_join(., bel_grid) 
+which_cell = st_sf(geometry = st_sfc(st_point(c(4.3517, 50.8503)), crs = 4326))  %>%  st_join(., bel_grid) 
 print(which_cell$id)
 # [1] 695
 
