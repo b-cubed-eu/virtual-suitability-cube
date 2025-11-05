@@ -16,7 +16,7 @@
 #' @export
 #' @importFrom stars st_as_stars st_set_dimensions
 #' @importFrom terra rast nlyr ncol nrow ext
-vsc_predict_sdm_for_new_area <- function(models,
+vsc_predict_sdm_for_new_area = function(models,
                                          new_stack,
                                          predict_fun = enmSdmX::predictEnmSdm,
                                          verbose = TRUE) {
@@ -30,27 +30,27 @@ vsc_predict_sdm_for_new_area <- function(models,
     stop("`predict_fun` must be a function(model, new_stack) -> SpatRaster.", call. = FALSE)
   }
 
-  preds <- vector("list", length(models))
-  nms   <- names(models)
-  if (is.null(nms) || any(!nzchar(nms))) nms <- paste0("sp", seq_along(models))
+  preds = vector("list", length(models))
+  nms   = names(models)
+  if (is.null(nms) || any(!nzchar(nms))) nms = paste0("sp", seq_along(models))
 
   for (i in seq_along(models)) {
-    sp <- nms[i]
+    sp = nms[i]
     if (isTRUE(verbose)) message("[vscube] Predicting: ", sp)
-    mx <- models[[i]]
+    mx = models[[i]]
 
-    r  <- predict_fun(mx, new_stack)  # << injection point
+    r  = predict_fun(mx, new_stack)  # << injection point
     if (!inherits(r, "SpatRaster")) {
       stop("`predict_fun` must return a SpatRaster.", call. = FALSE)
     }
-    names(r) <- "suitability"
-    preds[[i]] <- r
+    names(r) = "suitability"
+    preds[[i]] = r
   }
-  names(preds) <- nms
+  names(preds) = nms
 
-  stk <- terra::rast(preds)              # stack dei layer (uno per specie)
-  s   <- stars::st_as_stars(stk)
-  names(s) <- "suit"
-  s   <- stars::st_set_dimensions(s, names = c("x", "y", "species"))
+  stk = terra::rast(preds)              # stack dei layer (uno per specie)
+  s   = stars::st_as_stars(stk)
+  names(s) = "suit"
+  s   = stars::st_set_dimensions(s, names = c("x", "y", "species"))
   s
 }
