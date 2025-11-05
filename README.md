@@ -384,33 +384,6 @@ pull(cube_sp1sp2[,10,,], "suitability")
 #            [,1]        [,2]
 # [1,] 0.001298286 0.007460382
 
-## we can better visualize this information this way:
-values_suit = pull(cube_sp1sp2[,10,,], "suitability")
-# transform values_suit into a long format without rewriting it
-df_long = melt(values_suit)
-colnames(df_long) = c("cell", "time", "species", "suitability")
-
-# convert time and species into factors
-df_long$time = factor(df_long$time, labels = c("Jan", "Feb"))
-df_long$species = factor(df_long$species, labels = c("Species 1", "Species 2"))
-
-# plot
-ggplot(df_long, aes(x = species, y = suitability, color = species)) +
-  geom_point(size = 3) +
-  facet_wrap(~time, scales = "free_x", ncol = 2, strip.position = "bottom") + 
-  labs(title = "Suitability for species in January and February",
-       x = "Month",
-       y = "Suitability") +
-  scale_color_manual(values = c("Species 1" = "purple2", "Species 2" = "orange")) + 
-  theme_minimal() +
-  theme(
-    axis.text.x = element_blank(), 
-    axis.ticks.x = element_blank(),            
-    panel.spacing = unit(2, "lines"),          
-    axis.line = element_line(color = "black", size = 0.8),
-    strip.placement = "outside", 
-    legend.position = "right",                 
-    panel.border = element_rect(color = "black", fill = NA, size = 0.))
 ```
 <p align="center">
   <img width="550" height="330" src="https://github.com/rociobeatrizc/virtual_suitability_cube/blob/main/images/boxplot.png">
