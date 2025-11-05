@@ -19,7 +19,7 @@
 #'   \item \code{sdms}: list(models, predictions)
 #' }
 #' @export
-vsc_run_pipeline <- function(
+vsc_run_pipeline = function(
   occ_file,
   iso3,
   month = 5,
@@ -31,10 +31,10 @@ vsc_run_pipeline <- function(
   predictors = NULL,
   verbose = TRUE
 ) {
-  cl  <- vsc_build_worldclim(iso3, variables = variables, res = res, version = version, month = month, path = path)
-  occ <- vsc_read_occurrences(occ_file)
-  sp  <- split_species_data(occ)
-  sdms <- vsc_create_sdm_for_species_list(
+  cl  = vsc_build_worldclim(iso3, variables = variables, res = res, version = version, month = month, path = path)
+  occ = vsc_read_occurrences(occ_file)
+  sp  = split_species_data(occ)
+  sdms = vsc_create_sdm_for_species_list(
     sp, cl$predictors,
     background_points = background_points,
     predictors = predictors,
