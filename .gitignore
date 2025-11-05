@@ -1,24 +1,6 @@
-*.dbf
-*.doc*
-*.gddoc
-*.gdsheet
-*.gpkg
-*.html
-*.mdb
-*.shp*
-*.shx
-*.xls*
-*_files
- # Mac OS
- .DS_Store
-.RData
-.Renviron
-.Rhistory
 .Rproj.user
-.Ruserdata
+.Rhistory
+.RData
 .httr-oauth
-docs
-inst/doc
-libs
-output
-renv/library
+.DS_Store
+.quarto
