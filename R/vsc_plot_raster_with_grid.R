@@ -8,12 +8,12 @@
 #' @export
 #' @importFrom ggplot2 ggplot aes geom_raster geom_sf scale_fill_viridis_c theme_void theme element_blank margin
 #' @importFrom terra as.data.frame
-vsc_plot_raster_with_grid <- function(r, grid, layer = 1) {
+vsc_plot_raster_with_grid = function(r, grid, layer = 1) {
   if (!inherits(r, "SpatRaster")) stop("`r` must be a SpatRaster.", call. = FALSE)
-  if (nlyr(r) > 1) r <- r[[layer]]
+  if (nlyr(r) > 1) r = r[[layer]]
 
-  df <- terra::as.data.frame(r, xy = TRUE, na.rm = TRUE)
-  val_col <- names(df)[3L]  # nome colonna valori
+  df = terra::as.data.frame(r, xy = TRUE, na.rm = TRUE)
+  val_col = names(df)[3L]  # nome colonna valori
 
   ggplot2::ggplot() +
     ggplot2::geom_raster(data = df, ggplot2::aes(x = x, y = y, fill = .data[[val_col]])) +
