@@ -5,7 +5,7 @@
 #' @return A `ggplot` object.
 #' @export
 #' @importFrom ggplot2 ggplot aes geom_point theme_bw theme element_text
-vsc_plot_cell_suitability <- function(df) {
+vsc_plot_cell_suitability = function(df) {
   if (!all(c("species","suitability") %in% names(df))) {
     stop("`df` must have columns 'species' and 'suitability'.", call. = FALSE)
   }
