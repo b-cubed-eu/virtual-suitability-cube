@@ -3,10 +3,8 @@ test_that("vsc_predict_sdm_for_new_area works with injected predict_fun", {
   r <- terra::rast(ncol = 3, nrow = 3, vals = runif(9))
   names(r) <- "bio1"
 
-  # finta "lista di modelli" (i contenuti non importano, li consuma predict_fun)
   fake_models <- list(a = list(), b = list())
 
-  # predict_fun finto: restituisce un raster random con stesso extent e dimensioni
   fake_predict <- function(model, new_stack) {
     terra::rast(ncol = terra::ncol(new_stack),
                 nrow = terra::nrow(new_stack),
