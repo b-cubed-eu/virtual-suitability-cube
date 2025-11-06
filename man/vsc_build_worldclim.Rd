@@ -2,47 +2,39 @@
 % Please edit documentation in R/vsc_build_worldclim.R
 \name{vsc_build_worldclim}
 \alias{vsc_build_worldclim}
-\title{Download WorldClim and build predictors (stars + SpatRaster for a month)}
+\title{Build WorldClim predictors and a stars cube for a given country and month}
 \usage{
 vsc_build_worldclim(
   iso3,
-  variables = c("tmin", "tmax", "prec", "tavg", "wind"),
+  month,
+  vars = c("tmin", "tmax", "prec", "tavg", "wind"),
   res = 0.5,
   version = "2.1",
-  month = 5,
   path = tempdir()
 )
 }
 \arguments{
-\item{iso3}{Character ISO3 country code (e.g., "NLD" or "Nld").}
+\item{iso3}{Character ISO3 country code (e.g., "NLD", "BEL").}
 
-\item{variables}{Character vector of WorldClim variables. Defaults to
-\code{c("tmin","tmax","prec","tavg","wind")}. Valid values include
-\code{tmin}, \code{tmax}, \code{tavg}, \code{prec}, \code{wind}, \code{vapr}, \code{bio}.}
+\item{month}{Integer month 1–12 to extract from WorldClim stacks.}
 
-\item{res}{Numeric WorldClim resolution in arc-minutes. One of 10, 5, 2.5, 0.5.}
+\item{vars}{Character vector of variables to fetch. Default:
+c("tmin","tmax","prec","tavg","wind").}
 
-\item{version}{Character WorldClim version, e.g. "2.1".}
+\item{res}{WorldClim resolution (0.5, 2.5, 5, 10). Default 0.5 arc-min.}
 
-\item{month}{Integer in 1:12; which month to extract as training predictors.}
+\item{version}{WorldClim version string (e.g., "2.1").}
 
-\item{path}{Character output directory for \code{geodata::worldclim_country()} (temporary by default).}
+\item{path}{Download path. Default: tempdir().}
 }
 \value{
 A list with:
 \itemize{
-\item \code{stars_climate}: \code{stars} object with 3 dims (x,y,time) and attributes = \code{variables}.
-\item \code{predictors}: \code{SpatRaster} with the selected \code{month} and layer names = \code{variables}.
+\item stars: stars object with variables as attributes (x, y, time)
+\item predictors: SpatRaster for the selected month, named after available vars
+\item vars_kept: names of variables that were successfully downloaded/kept
 }
 }
 \description{
-Downloads monthly WorldClim variables for a country code (ISO3), converts them
-to a \code{stars} object with attributes \code{tmin}, \code{tmax}, \code{prec}, \code{tavg}, \code{wind},
-and extracts a training month as \code{SpatRaster} predictors.
-}
-\examples{
-\dontrun{
-cl <- vsc_build_worldclim("NLD", month = 5)
-cl$predictors
-}
+Build WorldClim predictors and a stars cube for a given country and month
 }
