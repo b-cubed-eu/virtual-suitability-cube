@@ -1,58 +1,83 @@
-#' Download WorldClim and build predictors (stars + SpatRaster for a month)
+#' Build WorldClim predictors and a stars cube for a given country and month
 #'
-#' Downloads monthly WorldClim variables for a country code (ISO3), converts them
-#' to a `stars` object with attributes `tmin`, `tmax`, `prec`, `tavg`, `wind`,
-#' and extracts a training month as `SpatRaster` predictors.
-#'
-#' @param iso3 Character ISO3 country code (e.g., "NLD" or "Nld").
-#' @param variables Character vector of WorldClim variables. Defaults to
-#'   `c("tmin","tmax","prec","tavg","wind")`. Valid values include
-#'   `tmin`, `tmax`, `tavg`, `prec`, `wind`, `vapr`, `bio`.
-#' @param res Numeric WorldClim resolution in arc-minutes. One of 10, 5, 2.5, 0.5.
-#' @param version Character WorldClim version, e.g. "2.1".
-#' @param month Integer in 1:12; which month to extract as training predictors.
-#' @param path Character output directory for `geodata::worldclim_country()` (temporary by default).
+#' @param iso3  Character ISO3 country code (e.g., "NLD", "BEL").
+#' @param month Integer month 1–12 to extract from WorldClim stacks.
+#' @param vars  Character vector of variables to fetch. Default:
+#'              c("tmin","tmax","prec","tavg","wind").
+#' @param res   WorldClim resolution (0.5, 2.5, 5, 10). Default 0.5 arc-min.
+#' @param version WorldClim version string (e.g., "2.1").
+#' @param path  Download path. Default: tempdir().
 #'
 #' @return A list with:
-#' \itemize{
-#'   \item \code{stars_climate}: `stars` object with 3 dims (x,y,time) and attributes = `variables`.
-#'   \item \code{predictors}: `SpatRaster` with the selected `month` and layer names = `variables`.
-#' }
-#'
-#' @examples
-#' \dontrun{
-#' cl = vsc_build_worldclim("NLD", month = 5)
-#' cl$predictors
-#' }
+#'   - stars: stars object with variables as attributes (x, y, time)
+#'   - predictors: SpatRaster for the selected month, named after available vars
+#'   - vars_kept: names of variables that were successfully downloaded/kept
 #' @export
-#' @importFrom geodata worldclim_country
-#' @importFrom stars st_as_stars
-#' @importFrom terra rast
-vsc_build_worldclim = function(
+vsc_build_worldclim <- function(
   iso3,
-  variables = c("tmin","tmax","prec","tavg","wind"),
-  res = 0.5,
+  month,
+  vars    = c("tmin","tmax","prec","tavg","wind"),
+  res     = 0.5,
   version = "2.1",
-  month = 5,
-  path = tempdir()
+  path    = tempdir()
 ) {
-  stopifnot(is.character(iso3), length(iso3) == 1L)
-  stopifnot(month %in% 1:12)
+  stopifnot(is.character(iso3), nchar(iso3) == 3)
+  if (!is.numeric(month) || length(month) != 1L || month < 1L || month > 12L) {
+    stop("`month` must be a single integer from 1 to 12.")
+  }
 
-  # download each variable as SpatRaster (12 layers each)
-  rasters = lapply(variables, function(v) {
-    geodata::worldclim_country(iso3, v, path = path, res = res, version = version)
-  })
+  # 1) Download each requested variable (robust to failures)
+  fetch_one <- function(var) {
+    tryCatch(
+      geodata::worldclim_country(iso3, var = var, path = path, res = res, version = version),
+      error = function(e) {
+        message("[vsc_build_worldclim] Skipping variable '", var, "': ", conditionMessage(e))
+        NULL
+      }
+    )
+  }
+  ras_list_raw <- lapply(vars, fetch_one)
+  names(ras_list_raw) <- vars
 
-  # convert each to stars, bind as attributes and name them
-  stars_list = lapply(rasters, stars::st_as_stars)
-  stars_clima = do.call(c, stars_list)
-  names(stars_clima) = variables
+  # 2) Keep only non-NULL with 12 layers (one per month)
+  keep <- vapply(ras_list_raw, function(x) !is.null(x) && terra::nlyr(x) >= 12L, logical(1))
+  if (!any(keep)) stop("No WorldClim variables were successfully downloaded for iso3 = ", iso3, ".")
 
-  # month
-  clima_m = stars_clima[, , month, drop = FALSE]
-  predictors = terra::rast(clima_m)
-  names(predictors) = variables
+  ras_list  <- ras_list_raw[keep]
+  vars_kept <- vars[keep]
 
-  list(stars_climate = stars_clima, predictors = predictors)
+  # Ensure time is 1..12 for each kept stack (be forgiving if already set)
+  for (i in seq_along(ras_list)) {
+    terra::time(ras_list[[i]]) <- 1:terra::nlyr(ras_list[[i]])
+  }
+
+  # 3) Build a stars cube with variables as attributes
+  stars_list <- lapply(ras_list, stars::st_as_stars)
+  stars_clima <- do.call(c, stars_list)
+  stars_clima <- stats::setNames(stars_clima, vars_kept)
+
+  # 4) Slice the requested month along the "time" dimension
+  # Use stars::slice explicitly (avoid masking by dplyr)
+  if (!"time" %in% names(stars::st_dimensions(stars_clima))) {
+    stop("The stars object has no 'time' dimension; cannot slice by month.")
+  }
+  clima_month <- stars::slice(stars_clima, "time", month)
+
+  # 5) Build the SpatRaster predictors for that month and set names safely
+  preds <- terra::rast(clima_month)
+  if (terra::nlyr(preds) == length(vars_kept)) {
+    names(preds) <- vars_kept
+  } else {
+    warning(
+      "Number of predictor layers (", terra::nlyr(preds),
+      ") does not match kept variables (", length(vars_kept),
+      "). Keeping original names."
+    )
+  }
+
+  list(
+    stars      = stars_clima,
+    predictors = preds,
+    vars_kept  = vars_kept
+  )
 }
